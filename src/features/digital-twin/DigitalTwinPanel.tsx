@@ -89,7 +89,9 @@ export function DigitalTwinWorkspace({
     pinDropMode,
     selectUnit,
     selectedUnitId,
+    setModelOverrideUrl,
     setCaptureState,
+    clearDefaultModelForProperty,
     setFloor,
     setLayers,
     setPinDrop,
@@ -230,11 +232,55 @@ export function DigitalTwinWorkspace({
     const normalized = url.toLowerCase();
     return normalized.endsWith('.glb') || normalized.endsWith('.gltf');
   };
-  const modelUrl = isRenderableModel(modelOverrideUrl)
+  const fallbackModelUrl = '/listing-3d-mockup/models/modern-apartment-building.glb';
+  const usingOverride = isRenderableModel(modelOverrideUrl);
+  const candidateModelUrl = usingOverride
     ? modelOverrideUrl
     : isRenderableModel(manifest.odm_model_url ?? null)
     ? manifest.odm_model_url
-    : '/listing-3d-mockup/models/modern-apartment-building.glb';
+    : fallbackModelUrl;
+  const [resolvedModelUrl, setResolvedModelUrl] = useState(candidateModelUrl);
+
+  useEffect(() => {
+    let active = true;
+    const resolveUrl = async () => {
+      if (!candidateModelUrl) {
+        if (active) {
+          setResolvedModelUrl(fallbackModelUrl);
+        }
+        return;
+      }
+      if (!candidateModelUrl.startsWith('/')) {
+        if (active) {
+          setResolvedModelUrl(candidateModelUrl);
+        }
+        return;
+      }
+      try {
+        const response = await fetch(candidateModelUrl, { method: 'HEAD' });
+        if (!response.ok) {
+          throw new Error('missing model');
+        }
+        if (active) {
+          setResolvedModelUrl(candidateModelUrl);
+        }
+      } catch {
+        if (!active) {
+          return;
+        }
+        setResolvedModelUrl(fallbackModelUrl);
+        if (usingOverride) {
+          setModelOverrideUrl(null);
+          clearDefaultModelForProperty(propertyId);
+        }
+      }
+    };
+
+    void resolveUrl();
+    return () => {
+      active = false;
+    };
+  }, [candidateModelUrl, clearDefaultModelForProperty, fallbackModelUrl, propertyId, setModelOverrideUrl, usingOverride]);
 
   return (
     <div className={cn('space-y-5', className)}>
@@ -385,7 +431,7 @@ export function DigitalTwinWorkspace({
 
             <div className="relative">
               <BuildingViewer3D
-                modelUrl={modelUrl}
+                modelUrl={resolvedModelUrl}
                 units={units}
                 pins={pins}
                 activeLayers={activeLayers}

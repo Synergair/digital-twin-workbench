@@ -1,5 +1,6 @@
 import Badge from '@/components/ui/badge';
 import { V2Surface, V2StatusPill } from '@/components/dashboard/v2/primitives';
+import { GoogleMapsEmbed } from '@/components/maps/GoogleMapsEmbed';
 import { useOwnerPropertiesStore } from '@/store/ownerPropertiesStore';
 import {
   useIntelligenceAggregate,
@@ -101,22 +102,24 @@ export function TwinPropertyIntelligencePanel({ propertyId }: { propertyId: stri
 
           <div className="rounded-2xl border border-[var(--semantic-border)] bg-[var(--panel-soft)] p-4 text-sm">
             <p className="text-xs uppercase tracking-[0.08em] text-[var(--semantic-text-subtle)]">Carte</p>
-            <div className="mt-3 h-44 rounded-2xl border border-[var(--semantic-border)] bg-[linear-gradient(135deg,_rgba(13,107,107,0.12),_rgba(255,255,255,0.9))] p-3">
-              <div className="flex items-start justify-between text-xs text-[var(--semantic-text-subtle)]">
-                <span>Google Maps ready</span>
-                <span>
-                  {formatNumber(intelligenceProperty?.latitude ?? null)} / {formatNumber(intelligenceProperty?.longitude ?? null)}
-                </span>
-              </div>
-              <div className="mt-4 grid h-[100px] grid-cols-6 gap-2 text-[10px] text-[var(--semantic-text-subtle)]">
-                {Array.from({ length: 12 }).map((_, index) => (
-                  <div key={`grid-${index}`} className="rounded-lg border border-white/70 bg-white/70" />
-                ))}
-              </div>
-              <div className="mt-2 text-[10px] text-[var(--semantic-text-subtle)]">
-                Points: {intelligenceProperty?.city ?? 'N/A'} - {intelligenceProperty?.province ?? 'N/A'}
-              </div>
-            </div>
+            <GoogleMapsEmbed
+              center={{
+                lat: intelligenceProperty?.latitude ?? 45.5017,
+                lng: intelligenceProperty?.longitude ?? -73.5673,
+              }}
+              zoom={15}
+              markers={[
+                {
+                  id: 'property',
+                  lat: intelligenceProperty?.latitude ?? 45.5017,
+                  lng: intelligenceProperty?.longitude ?? -73.5673,
+                  title: intelligenceProperty?.address ?? address,
+                  type: 'property',
+                  info: `${intelligenceProperty?.type ?? 'Property'} - ${formatNumber(intelligenceProperty?.squareFeet)} pi2`,
+                },
+              ]}
+              className="mt-3 h-44"
+            />
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
