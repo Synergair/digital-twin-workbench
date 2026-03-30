@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --semantic-text: #0b141c;
+  --semantic-text-subtle: #5f6d78;
+  --semantic-border: rgba(12, 24, 33, 0.12);
+  --panel-soft: rgba(247, 249, 251, 0.9);
+  --surface-glass: rgba(255, 255, 255, 0.88);
+  --surface-strong: #ffffff;
+  --semantic-primary: #0b6b6b;
+  --semantic-primary-strong: #118a87;
+  --semantic-primary-soft: rgba(11, 107, 107, 0.12);
+  --accent-ember: #e0523f;
+  --accent-ember-soft: rgba(224, 82, 63, 0.14);
+  --accent-sky: #2d92c4;
+  --accent-sky-soft: rgba(45, 146, 196, 0.12);
+  --shadow-soft: 0 18px 45px rgba(7, 18, 26, 0.08);
+  --shadow-strong: 0 28px 70px rgba(7, 18, 26, 0.16);
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --ui-grid: rgba(13, 107, 107, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Space Grotesk', 'Sora', sans-serif;
+  background:
+    radial-gradient(circle at 12% 14%, rgba(17, 138, 135, 0.16), transparent 32%),
+    radial-gradient(circle at 86% 6%, rgba(224, 82, 63, 0.12), transparent 38%),
+    radial-gradient(circle at 50% 90%, rgba(45, 146, 196, 0.12), transparent 42%),
+    linear-gradient(180deg, #f7f8fa 0%, #eef1f4 45%, #f8fafc 100%);
+  color: var(--semantic-text);
+}
+
+.surface-card {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--semantic-border);
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
+}
+
+.surface-card-strong {
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-strong);
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
+}
+
+.engineering-grid {
+  background-image:
+    linear-gradient(var(--ui-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ui-grid) 1px, transparent 1px),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.18), transparent 40%);
+  background-size: 36px 36px, 36px 36px, auto;
+  background-position: center;
+}

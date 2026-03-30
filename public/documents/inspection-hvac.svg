@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#f6f2ef"/>
+  <rect x="60" y="70" width="840" height="400" rx="24" fill="#ffffff" stroke="#e3d7cf" stroke-width="3"/>
+  <rect x="160" y="180" width="220" height="180" rx="16" fill="#f1e2d5" stroke="#d1bda9"/>
+  <rect x="410" y="180" width="360" height="60" rx="10" fill="#d9ecec" stroke="#9fb9b9"/>
+  <rect x="410" y="260" width="260" height="60" rx="10" fill="#d9ecec" stroke="#9fb9b9"/>
+  <circle cx="690" cy="290" r="22" fill="#0d7377"/>
+  <text x="120" y="130" font-family="Arial, sans-serif" font-size="28" fill="#3d312a">Inspection HVAC</text>
+  <text x="120" y="170" font-family="Arial, sans-serif" font-size="16" fill="#6c5a50">Filtration, debit d air, capteurs</text>
+</svg>

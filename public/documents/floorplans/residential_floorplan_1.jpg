@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-VWNHM75GQ5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+      gtag('config', 'G-VWNHM75GQ5', { 'send_page_view': false });
+  </script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-835505178"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-835505178');
+</script>
+  <!-- Facebook Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('set','autoConfig', false, '172852129997870');
+  fbq('init', '172852129997870');
+  document.addEventListener('DOMContentLoaded', () => fbq('track','PageView'));
+
+</script>
+<noscript>
+  <img height="1" width="1" style="display:none" alt=""
+       src="https://www.facebook.com/tr?id=172852129997870&ev=PageView&noscript=1">
+</noscript>
+<!-- End Facebook Pixel Code -->        <title>Not Found - Houseplans.com</title>
+
+  <meta name="description" content="Shop over 40,000 house plans, floor plans & blueprints & build your dream home design. Custom layouts & cost to build reports available. Low price guaranteed.">
+
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="114x114" href="/favicon-114x114.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="72x72" href="/favicon-72x72.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Houseplans">
+<meta name="application-name" content="Houseplans">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f2723a">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="theme-color" content="#ffffff">
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Houseplans">
+  <link rel="stylesheet" href="/public/gen/style/houseplans.bundle.css?v=cf15598f84">
+  
+    <script src="/common/static/lib/common/javascripts/jquery-3.5.1.min.js"></script>
+  
+    
+  <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+  <script async src="/common/static/lib/common/javascripts/prebid5.13.0.min.js"></script>
+  <script src="/public/gen/ads.bundle.js?v=cf15598f84"></script>
+      <script>
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=document.createElement("script");r.type="text/javascript",r.async=!0,r.src="https://cdn.heapanalytics.com/js/heap-"+e+".js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(r,a);for(var n=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],o=0;o<p.length;o++)heap[p[o]]=n(p[o])};
+    heap.load("2370000137", {
+      disableTextCapture: true
+    });
+          </script>
+
+
+<script>
+  (function() {
+    function isFirstPageviewEver() {
+      if (!localStorage.getItem('firstPageview')) {
+        localStorage.setItem('firstPageview', new Date().toISOString());
+        return true;
+      }
+      return false;
+    }
+
+    if (isFirstPageviewEver()) {
+      heap.track('First Pageview Ever', {
+        page: window.location.pathname,
+        timestamp: new Date().toISOString()
+      });
+    }
+  })();
+  </script>
+      <script src="https://cdn.attn.tv/houseplans/dtag.js"></script>
+  </head>
+<body class="bg-body-white font-body text-default-color md:overflow-visible">
+  <script>
+    window.templateName = '' || '(templateName not set)';
+</script>
+
+            <div class="hidden md:block bg-black text-center w-full">
+        <div class="mx-auto">
+            <div id="div-gpt-ad-leaderboard1-728x90" class="ad ad-728x90 ad-center"></div>
+        </div>
+      </div>
+      
+  
+
+<div class="w-full sticky absolute z-50" style="top: 0;">
+  <div class="text-center bg-black">
+                                            </div>
+  <div class="relative bg-black text-right">
+    <nav class="mx-auto max-w-[2300px] flex items-center justify-between flex-wrap py-1">
+      <div class="items-center shrink-0 text-white sm:ml-2 pl-2"><a href="/"><img width="181" height="28" class="logo-with-text" src="/public/img/logo.svg?v=cf15598f84" alt="House Plans Logo" title="Houseplans.com"></a></div>
+      <div class="block sm:hidden mt-1">
+                <a class="relative mt-0 mr-3 inline-block text-gray-200 font-extralight no-underline hover:underline" href="tel:1-800-913-2350">1-800-913-2350</a>
+      </div>
+      <div class="plan-search w-full hidden sm:flex flex-grow sm:flex sm:items-end sm:w-auto">
+        <div class="text-sm sm:flex-grow">
+                    <div class="flex items-center justify-end flex-nowrap py-2 mr-2 mr-4 plan-search-height tracking-wide">
+            <img width="14" height="14" src="/public/img/icon-hpphone.svg?v=cf15598f84" class="inline-block -mt-px w-[14px]" alt="Call Houseplans"><div class="relative block mr-4 pl-1 sm:inline-block sm:mt-0 text-gray-200 font-extralight no-underline hover:underline"><span class="call-us-at-text">Call us at&nbsp;</span><a class="js-phone-number" href="tel:1-800-913-2350">1-800-913-2350</a></div>
+            <form action="/search" autocomplete="off">
+              <div class="input-group inline-flex justify-center">
+                <input class="py-1 px-2 text-black bg-gray-100 border border-gray-300 focus:bg-white plan-search-height inside-focus-custom placeholder:text-gray-300 placeholder:italic" name="hwpn" placeholder="ENTER PLAN #" type="text">
+                <button class="pt-1px px-2 text-black bg-gray-300 border border-gray-300 rounded-tr rounded-br text-xs plan-search-height inside-focus-custom rounded-l-none rounded-r-sm" type="submit">GO</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="header-menubar w-auto sticky top-0   z-60 bg-gray-800">
+            <div class="flex justify-end flex-nowrap pl-1 md:hidden relative">
+        <div class="absolute left-0 pt-1 md:hidden">
+          <button class="flex items-center ml-2 mr-1 px-2 py-1 text-white border rounded border-gray-300 hover:text-white focus:outline-hidden" id="hamburgerMenu">
+            <svg class="fill-current inline-block h-5 w-4" viewBox="0 0 480 359.09"><defs><style>.cls-1{fill:none;stroke:#f1f1f1;stroke-linecap:round;stroke-width:60px;}</style></defs><title>icon-hamburger</title><line class="cls-1" x1="30" y1="30" x2="450" y2="30"/><line class="cls-1" x1="30" y1="179.55" x2="450" y2="179.55"/><line class="cls-1" x1="30" y1="329.09" x2="450" y2="329.09"/></svg>
+          </button>
+        </div>
+        <a href="/search" class="md:hidden mr-1.5">
+          <div class="relative inline-block sm:mr-2.5" style="margin-top: 7px;">
+            <img width="14" height="14" src="/public/img/icon-hpsearch.svg" class="inline-block w-[14px] " alt="Search">
+          </div>
+        </a>
+                  <a class="register-text block sm:inline-block sm:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 px-1 pr-2" href="/account/register?redirectUrl=">REGISTER</a>
+                          <a class="block sm:inline-block sm:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 px-1" href="/account/login?redirectUrl=">LOGIN</a>
+                <a class="block sm:inline-block sm:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 pl-2 pr-0 relative" href="/save">
+          SAVED 
+                      <img width="11" height="10" src="/public/img/icon-save-header-heart-white.svg?v=cf15598f84" class="relative inline-block w-[14px] left-px" style="top: -1.33px; width: 10.75px;" alt="No Saved Plans">
+                  </a>
+        <a class="flex md:inline-flex md:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 px-2 relative" href="/cart">
+          CART&nbsp;
+                      <img width="20" height="16" class="relative" style="top: -1px;" src="/public/img/icon-cart-white-empty.svg?v=cf15598f84" alt="Cart Empty">
+                  </a>
+      </div>
+      <div class="menu-wrapper bg-gray-800 z-60 hidden md:block relative pb-2 md:pb-0 shadow-sm" id="headerMenu">
+        <nav class="mx-auto max-w-[2300px] flex items-center justify-between flex-wrap pt-2 md:pt-0 px-2 pb-2 md:pb-0">
+          <div class="w-full block flex-grow md:flex md:items-start md:w-auto">
+            <div class="text-left text-sm md:flex-grow">
+
+              <div class="relative block md:inline-block">
+                <a class="block md:hidden md:mt-0 text-xs text-white hover:text-white no-underline md:hover:bg-gray-700 py-3 pl-1 md:pl-2 md:pr-1" href="/">
+                  HOME
+                </a>
+              </div>
+
+              <div class="relative block md:inline-block">
+                <a class="block md:inline-block md:mt-0 text-xs text-white hover:text-white no-underline md:hover:bg-gray-700 py-3 pl-1 md:pl-2 md:pr-1" href="/search">
+                  SEARCH <img width="14" height="14" src="/public/img/icon-hpsearch.svg?v=cf15598f84" class="inline-block w-[14px] left-px" style="top: -1px;" alt="Search">
+                </a>
+              </div>
+
+                            
+                            <div class="relative block md:inline-block">
+                <a class="block md:inline-block md:mt-0 text-xs text-white hover:text-white no-underline md:hover:bg-gray-700 py-2 px-1 text-onsale" href="/onsale"><span style="border-bottom: 2px solid red;">SALE</span></a>
+              </div>
+
+                            <div class="relative blog-item-show-hide">
+                <div class="dropdown relative block md:inline-block md:mt-0 text-xs text-white hover:text-white no-underline md:hover:bg-gray-700 py-3 pl-1"
+                    data-url="/blog">
+                  <span class="dropdown-group-menu">
+                    <a href="/blog" class="menubar-item block md:inline-block uppercase">BLOG <svg class="menubar-arrow fill-current inline-block h-4 w-4 -ml-1 -mt-1 transform rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg></a>
+                  </span>
+                  <div class="dropdown-menu relative md:absolute left-0 hidden">
+                    <ul class="bg-gray-700 w-full mt-0 md:mt-2 pb-1">
+                      <li><a href="/blog/tag/4-bedroom-house-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">4 Bedroom House Plans</a></li>
+                      <li><a href="/blog/tag/architecture-and-design" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Architecture &amp; Design</a></li>
+                      <li><a href="/blog/tag/barndominium-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Barndominium Plans</a></li>
+                      <li><a href="/blog/tag/cost-to-build-a-house-and-building-basics" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Cost to Build a House &amp; Building Basics</a></li>
+                      <li><a href="/blog/tag/floor-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Floor Plans</a></li>
+                      <li><a href="/blog/tag/garage-plans-and-garage-apartment-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Garage Plans</a></li>
+                      <li><a href="/blog/tag/modern-farmhouse-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Modern Farmhouse Plans</a></li>
+                      <li><a href="/blog/tag/modern-house-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Modern House Plans</a></li>
+                      <li><a href="/blog/tag/open-floor-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Open Floor Plans</a></li>
+                      <li><a href="/blog/tag/small-house-plans" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase">Small House Plans</a></li>
+                      <li><a href="/blog" class="block py-3 px-3 text-xs text-white bg-gray-700 hover:bg-gray-600 no-underline uppercase"><strong>See All Blogs</strong></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="w-full block flex-grow md:flex md:items-end md:w-auto text-left md:text-right">
+            <div class="hidden md:block text-sm md:flex-grow">
+              <div class="block md:hidden">
+                <hr class="bg-gray-600 mt-0 mb-0 h-px pb-px">
+              </div>
+              <div class="pl-2 pt-0">
+                                <div class="relative inline-block group">
+                  <a class="register-link block md:inline-block md:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 px-2" href="/account/register?redirectUrl=">REGISTER</a>
+
+                  <!-- Popup -->
+                  <div id="delayed-register-popup" class="absolute right-[4%] z-50 mt-0 w-72 hidden opacity-0 group-hover:block overflow-visible  transition-opacity duration-300">
+                    <!-- Triangle/Carrot -->
+                    <svg class="absolute -top-2" style="right: 20px;" width="30" height="20" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+                      <polygon points="15,2 28,18 2,18" fill="rgb(242,242,242)" stroke="none" />
+                      <path d="M2,18 L15,2 L28,18" stroke="rgb(235,235,235)" stroke-width="2" fill="none" />
+                    </svg>
+
+                    <!-- <div class="absolute right-[2px] -translate-x-1/2 -top-2">
+                      <div class="w-0 h-0 border-l-16 border-r-16 border-b-16 border-transparent border-b-gray-200"></div>
+                    </div> -->
+                    <!-- Popup Box -->
+                    <div class="text-left bg-gray-50 mt-2 rounded-md shadow-lg p-4 border-2 border-gray-100">
+                      <div class="flex justify-between">
+                        <p class="font-semibold mb-3">Create an Account for the Best Experience</p>
+                        <div><img class="js-close-reg-popup mt-1" style="width: 14px; height: 14px;" src="/public/hp2/icons/icon-popup-close.svg?v=cf15598f84"></div>
+                      </div>
+                      <ul class="space-y-2 text-gray-700">
+                        <li class="grid grid-cols-[25px_1fr] items-start">
+                          <img class="mt-1" style="width: 14px; height: 14px;" src="/public/hp2/icons/icon-green-check.svg?v=cf15598f84">
+                          <span>Save plans &amp; searches</span>
+                        </li>
+                        <li class="grid grid-cols-[25px_1fr] items-start">
+                          <img class="mt-1" style="width: 14px; height: 14px;" src="/public/hp2/icons/icon-green-check.svg?v=cf15598f84"> 
+                          <span>Special access to customer service tools</span>
+                        </li>
+                        <li class="grid grid-cols-[25px_1fr] items-start">
+                          <img class="mt-1" style="width: 14px; height: 14px;" src="/public/hp2/icons/icon-green-check.svg?v=cf15598f84"> 
+                          <span>Quickly view order status</span>
+                        </li>
+                      </ul>
+                      <a href="/account/register?redirectUrl=" class="block text-center mt-4 w-full bg-cta hover:bg-cta-alt text-white font-bold py-2 rounded">
+                        Create Account
+                      </a>
+                      <a href="/account/login?redirectUrl=" class="block text-center font-semibold mt-2 w-full border border-gray-700 hover:bg-black text-black bg-white hover:text-white py-2 rounded">
+                        Sign In
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <script>
+                  if ( window.templateName !== 'static_pages/builder_program' ) {
+                    const storedItem = localStorage.getItem('regPopUpOnce');
+                    let shouldShowPopup = true;
+                    if (storedItem !== null) {
+                      try {
+                        const parsed = JSON.parse(storedItem);
+                        const now = new Date().getTime();
+
+                        if (now < parsed.expiry) {
+                          shouldShowPopup = false;
+                        } else {
+                          localStorage.removeItem('regPopUpOnce');
+                        }
+                      } catch (e) {
+                        localStorage.removeItem('regPopUpOnce');
+                      }
+                    }
+
+                    if (shouldShowPopup) {
+                      setTimeout(() => {
+                        const popup = document.getElementById('delayed-register-popup');
+                        if (popup) {
+                          popup.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+                          popup.classList.add('opacity-100');
+                        }
+                      }, 15000);
+
+                      const expiryTime = new Date().getTime() + 12 * 60 * 60 * 1000;
+                      localStorage.setItem('regPopUpOnce', JSON.stringify({ value: true, expiry: expiryTime }));
+
+                      document.querySelector('.js-close-reg-popup')?.addEventListener('click', () => {
+                        const popup = document.getElementById('delayed-register-popup');
+                        if (popup) {
+                          popup.classList.add('opacity-0', 'pointer-events-none');
+                          popup.classList.remove('opacity-100');
+                        }
+                      });
+                    }
+                  }
+                </script>
+                                                  <a class="block md:inline-block md:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 px-2" href="/account/login?redirectUrl=">LOGIN</a>
+                                <a class="block md:inline-block md:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 pl-2 pr-1 relative" href="/save">
+                  SAVED 
+                                      <img src="/public/img/icon-save-header-heart-white.svg?v=cf15598f84" class="relative inline-block w-[14px] left-px" width="11" height="10" style="top: -1px;" alt="No Saved Plans">
+                                  </a>
+                <a class="flex md:inline-flex md:mt-0 text-xs text-white hover:text-white no-underline hover:bg-gray-700 py-3 px-2 relative" href="/cart">
+                  CART&nbsp;
+                                      <img width="20" height="16" class="relative" style="top: -1px;" src="/public/img/icon-cart-white-empty.svg?v=cf15598f84" alt="Cart Empty">
+                                  </a>
+              </div>
+            </div><!-- Plan # Search (mobile) -->
+            <div class="block sm:hidden plan-search mt-1 mb-20">
+              <div class="flex items-center justify-center flex-nowrap py-2 mx-2">
+                <form action="/search" autocomplete="off">
+                  <div class="flex">
+                    <input tabindex="-1" class="py-1 px-2 text-black bg-white border rounded-none rounded-tl rounded-bl border-white focus:border-cta plan-search-height inside-focus-custom placeholder:text-gray-300 placeholder:italic" name="hwpn" placeholder="ENTER PLAN #" type="text">
+                    <button tabindex="-1" class="pl-2 pr-2 text-gray-700 bg-gray-300 focus:outline-hidden rounded-tr rounded-br plan-search-height" type="submit">GO</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="relative max-w-[2300px] mx-auto">
+      <div class="w-full max-w-lg mx-auto pt-12 pb-8 px-3 text-gray-500 text-center">
+    <p class="text-4xl font-semibold text-gray-600">Oops!&nbsp; Page not found.</p>
+  </div>
+  <hr class="border-b border-gray-200 max-w-5xl my-2 mx-auto h-px px-3" />
+  <div class="max-w-sm mx-auto py-10 px-3 text-center text-gray-500">
+    <p class="mb-5 text-balance">The page you are looking for cannot be found. This may be a result of either a mistyped address or an out-of-date link.</p>
+
+    <p class="text-balance">For immediate ordering and customer service, please don't hesitate to contact our plan experts at <a href="tel:1-800-913-2350" class="whitespace-nowrap font-bold text-secondary hover:text-secondary-alt no-underline">1-800-913-2350</a><br>
+
+    or via an email at <a href="mailto:sales@houseplans.com" class="whitespace-nowrap font-bold text-secondary hover:text-secondary-alt no-underline">sales@houseplans.com</a></p>
+  </div>
+  <div class="w-full max-w-lg mx-auto pt-4 pb-8 px-3 text-gray-500 text-center">
+    <div class="tutorial flex flex-col md:flex-row my-4">
+  <div class="flex flex-col sm:flex-row">
+    <div class="sm:w-1/3 text-left sm:mr-2 mb-8 sm:mb-0">
+      <div class="mx-8 sm:mx-0 bg-secondary py-8 sm:py-4 sm:py-8 rounded mb-2 sm:mb-3 text-center">
+        <img class="mx-auto" src="/common/static/lib/common/images/magnify.png?v=cf15598f84" alt="Browse">
+      </div>
+      <h3 class="text-2xl font-medium mx-8 sm:mx-0 mt-0 sm:mt-3 sm:mx-0 mb-0 pb-2">Browse</h3>
+      <p class="mx-8 sm:mx-0 leading-normal">Find plans by browsing <span class="whitespace-nowrap"><a class="text-secondary hover:text-secondary-alt no-underline" href="/collection">plan collections</a></span> or <span class="whitespace-nowrap"><a class="text-secondary hover:text-secondary-alt no-underline" href="/search">searching by features.</a></span></p>
+    </div>
+    <div class="sm:w-1/3 text-left sm:mr-2 mb-8 sm:mb-0">
+      <div class="mx-8 sm:mx-0 bg-cta py-8 sm:py-4 sm:py-8 rounded mb-2 sm:mb-3 text-center">
+        <img class="mx-auto" src="/common/static/lib/common/images/plus.png?v=cf15598f84" alt="Save">
+      </div>
+      <h3 class="text-2xl font-medium mx-8 sm:mx-0 mt-0 sm:mt-3 sm:mx-0 mb-0 pb-2">Save</h3>
+      <p class="mx-8 sm:mx-0 leading-normal">Save plans that you like by clicking on the <img style="width: 13px; height: 13px;" class="inline" src="/public/img/icon-save-heart-dark.svg?v=cf15598f84"> save button.</p>
+    </div>
+    <div class="sm:w-1/3 text-left sm:mr-2 mb-8 sm:mb-0">
+      <div class="mx-8 sm:mx-0 bg-success py-8 sm:py-4 sm:py-8 rounded mb-2 sm:mb-3 text-center">
+        <img class="mx-auto" src="/common/static/lib/common/images/compass.png?v=cf15598f84" alt="Customize">
+      </div>
+      <h3 class="text-2xl font-medium mx-8 sm:mx-0 mt-0 sm:mt-3 sm:mx-0 mb-0 pb-2">Customize</h3>
+      <p class="mx-8 sm:mx-0 leading-normal">Plans can be modified to meet your unique needs. <a class="text-secondary hover:text-secondary-alt no-underline" href="/custom-home-plans-overview">Learn more </a></p>
+    </div>
+  </div>
+</div>  </div>
+  </div>
+
+  <div class="hidden md:block bottom-banner py-12 text-center">
+          <div class="mx-auto">
+          <div id="div-gpt-ad-leaderboard2-728x90" class="ad ad-728x90 ad-center footer-ad"></div>
+      </div>
+      </div>
+
+
+  <footer>
+  <div class="footer-main bg-black text-center pb-24 sm:pb-12 lg:pb-3">
+    <div class="max-w-5xl mx-auto flex justify-center lg:justify-between flex-wrap py-3 text-sm text-white" style="background: url('/public/img/footerbg.jpg?v=cf15598f84'); background-size: cover;">
+      <div class="w-full flex justify-center lg:justify-end pt-4 lg:pt-0">
+        <div class="mr-1">
+      <a href="https://www.youtube.com/@houseplansdotcom" target=_blank class="block fresco border rounded-full border-white" style="width: 32px; height: 32px;">
+        <img width="32" height="32" src="/common/static/lib/common/images/social-icons/icon-social-youtube.svg?v=cf15598f84" alt="YouTube">
+      </a>
+    </div>
+
+    <div class="mr-1">
+      <a href="https://www.facebook.com/houseplansdotcom" target=_blank>
+        <img width="32" height="32" src="/common/static/lib/common/images/social-icons/icon-social-facebook.svg?v=cf15598f84" alt="Facebook">
+      </a>
+    </div>
+
+    <div class="mr-1">
+      <a href="https://www.pinterest.com/houseplansdotcom/" target=_blank>
+        <img width="32" height="32" src="/common/static/lib/common/images/social-icons/icon-social-pinterest.svg?v=cf15598f84" alt="Pinterest">
+      </a>
+    </div>
+
+    <div class="mr-1">
+      <a href="https://www.instagram.com/houseplans/" target=_blank>
+        <img width="32" height="32" alt="Instagram" src="/common/static/lib/common/images/social-icons/icon-social-instagram.svg?v=cf15598f84">
+      </a>
+    </div>
+      </div>
+    </div>
+    <div class="max-w-5xl mx-auto flex flex-wrap lg:flex-nowrap justify-center lg:justify-around pb-5">
+
+      <div class="flex flex-row items-center lg:flex-col pt-8 lg:pt-3 px-5 pb-10 min-w-300px">
+        <a href="/"><h2 class="my-0"><img width="181" height="28" class="logo-with-text mx-auto mt-3 mb-4" src="/public/img/logo.svg" alt="Houseplans.com" title="Houseplans.com"></h2></a>
+        <img width="62" height="59" class="mx-auto bg-white p-2 mt-1 lazy" src="/common/static/lib/common/images/nahb_logo.png?v=cf15598f84" alt="NAHB: National Association of Home Builders">
+      </div>
+
+      <div class="flex flex-col flex-wrap w-full sm:flex-row px-3">
+        <ul class="w-full sm:w-1/2 lg:w-1/4 shrink-0 flex-grow text-center lg:text-left mx-auto sm:px-5 lg:px-0 mb-10 lg:mb-5">
+          <li class="text-base leading-relaxed no-underline uppercase italic">
+            <h3 class="h6 mb-1 text-gray-400 font-semibold">Browse Plans</h3></li>
+          <li><a href="/search" class="text-white hover:text-primary text-xs leading-tight no-underline uppercase">Search</a></li>
+          <li><a href="/signature" class="text-white hover:text-primary text-xs leading-tight no-underline uppercase">Signature Plans</a></li>
+          <li><a href="/exclusive/directory" class="text-white hover:text-primary text-xs leading-tight no-underline uppercase">Exclusive Designers</a></li>
+          <li><a href="/onsale" class="text-white hover:text-primary text-xs leading-tight no-underline uppercase">On Sale</a></li>
+        </ul>
+
+        <ul class="w-full sm:w-1/2 lg:w-1/4 shrink-0 flex-grow text-center lg:text-left mx-auto sm:px-5 lg:px-0 mb-10 lg:mb-5">
+          <li class="text-base leading-relaxed no-underline uppercase uppercase italic">
+            <h3 class="h6 mb-1 text-gray-400 font-semibold">What we do</h3></li>
+          <li><a href="/about" class="text-white hover:text-primary text-xs leading-tight no-underline uppercase">About Us</a></li>
+          <li><a href="/blog" class="text-white hover:text-primary text-xs leading-tight no-underline uppercase">Blog</a></li>
+          <li><a href="/faq" class="text-white hover:text-primary text-xs leading-tight no-underline uppercase">FAQ</a></li>
+        </ul>
+
+        <ul class="w-full sm:w-1/2 lg:w-1/4 shrink-0 flex-grow text-center lg:text-left mx-auto sm:px-5 lg:px-0 mb-10 lg:mb-5">
+          <li class="text-base leading-relaxed no-underline uppercase italic">
+            <h3 class="h6 mb-1 text-gray-400 font-semibold">Resources</h3></li>
+          <li><a href="https://www.newhomesource.com/" target="_blank" class="text-white hover:text-primary text-xs leading-tight uppercase no-underline">NEW HOME SOURCE</a></li>
+          <li><a href="/builder-program" target="_blank" class="text-white hover:text-primary text-xs leading-tight uppercase no-underline">BUILDER ADVANTAGE</a></li>
+          <li><a href="https://www.builderonline.com" target="_blank" class="text-white hover:text-primary text-xs leading-tight uppercase no-underline">BUILDER MAGAZINE</a></li>
+          <li><a href="https://www.jlconline.com" target="_blank" class="inline-block text-white hover:text-primary text-xs leading-tight mt-3px pt-1 uppercase no-underline">JOURNAL OF LIGHT CONSTRUCTION</a></li>
+          <li><a href="https://zondahome.com" target="_blank" class="text-white hover:text-primary text-xs leading-tight uppercase no-underline">ZONDA HOME</a></li>
+          <li><a href="/affiliates" class="text-white hover:text-primary text-xs leading-tight uppercase no-underline">AFFILIATE PROGRAM</a></li>
+        </ul>
+
+        <ul class="w-full sm:w-1/2 lg:w-1/4 shrink-0 flex-grow text-center lg:text-left mx-auto sm:px-5 lg:px-0 mb-10 lg:mb-5">
+          <li class="text-base leading-relaxed no-underline uppercase italic">
+            <h3 class="h6 mb-1 text-gray-400 font-semibold">Get In Touch</h3></li>
+          <li><a href="/publish" class="text-white hover:text-primary text-xs leading-tight uppercase no-underline">Publish Houseplans</a></li>
+          <li><a href="/contact" class="text-white hover:text-primary text-xs leading-tight uppercase no-underline">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="bg-white pt-8">
+    <div class="flex flex-col lg:flex-row justify-center text-center sm:px-5 pt-2 pb-10 text-black">
+    <div class="inline-flex justify-center items-center pb-2 md:pb-0 lg:pr-5">
+      <a href="https://www.zondahome.com" target="_blank">
+        <img height="50" src="/common/static/lib/common/images/zonda-house-plans-logo.svg?v=cf15598f84" class="zonda-house-plans-logo" alt="Zonda House Plans">
+      </a>
+    </div>
+    <div class="inline-flex justify-center items-center py-2 md:pr-0 lg:pr-5">
+      <div class="text-gray-800 text-left text-sm leading-tight">
+        &copy; 2026 Zonda Media,<br> a Delaware corporation      </div>
+    </div>
+    <div class="flex justify-around items-center py-0">
+      <div class="flex-nowrap px-1 lg:pl-5 text-gray-800 text-sm leading-tight">
+        <a class="text-gray-800 hover:text-secondary text-sm" href="https://zondahome.com/legal/" target="_blank">Privacy Policy</a>&nbsp;&vert;
+        <a class="text-gray-800 hover:text-secondary text-sm" href="/terms-and-conditions">Terms &amp; Conditions</a>&nbsp;&vert;
+        <a class="text-gray-800 hover:text-secondary text-sm" href="https://zondahome.com/legal/ada-statement/" target="_blank">Accessibility&nbsp;Statement</a>
+      </div>
+    </div>
+  </div>
+  </div>
+</footer>
+
+  <!--  -->
+<script>
+  var PSP = PSP || {};
+  PSP.suggested = {
+    collections: [
+          ]
+  };
+  PSP.snippet = {
+    phoneNumber: '1-800-913-2350'
+  };
+  PSP.request = {
+      };
+
+  var window = window || {};
+  window.passport = window.passport || {};
+  window.passport = {
+          };
+</script>
+  <script src="/public/gen/base.bundle.js?v=cf15598f84"></script>
+
+    <script>
+    if (typeof heap !== "undefined") {
+      (function() {
+        heap.track("404 Error Page")
+      }());
+    }
+  </script>
+  <script src="/public/gen/ga_sendpageview.bundle.js?v=cf15598f84"></script>
+
+      <script>
+      if($(window).width() >= 977) {
+          
+googletag.cmd.push(function () {
+  googletag.defineSlot("/6752/hw.hpl", [728,90], "div-gpt-ad-leaderboard1-728x90")
+    .addService(googletag.pubads())
+    .setTargeting("pos", "leaderboard1");
+  googletag.display("div-gpt-ad-leaderboard1-728x90");
+});
+
+            
+googletag.cmd.push(function () {
+  googletag.defineSlot("/6752/hw.hpl", [728,90], "div-gpt-ad-leaderboard2-728x90")
+    .addService(googletag.pubads())
+    .setTargeting("pos", "leaderboard2");
+  googletag.display("div-gpt-ad-leaderboard2-728x90");
+});
+
+        }
+    </script>
+  
+    <script>
+function getParam(p) {
+  let match = RegExp('[?&]' + p + '=([^&]*)').exec(window.location.search);
+  return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function getExpiryRecord(value) {
+  let expiryPeriod = 90 * 24 * 60 * 60 * 1000; // 90 day expiry in milliseconds
+  let expiryDate = new Date().getTime() + expiryPeriod;
+  return {
+    value: value,
+    expiryDate: expiryDate
+  };
+}
+
+function addGclid() {
+  let gclidParam = getParam('gclid');
+  let gclidFormFields = ['gclid', '00N0G00000Dg4I6'];
+  let gclidRecord = null;
+
+  let gclsrcParam = getParam('gclsrc');
+  let isGclsrcInvalid = !gclsrcParam || gclsrcParam.indexOf('aw') !== -1;
+  if (gclidParam && isGclsrcInvalid) {
+    gclidRecord = getExpiryRecord(gclidParam);
+    localStorage.setItem('gclid', JSON.stringify(gclidRecord));
+  }
+
+  let gclid = null;
+  try {
+    gclid = JSON.parse(localStorage.getItem('gclid'));
+  } catch (e) {
+    console.error('Error parsing gclid from localStorage:', e);
+  }
+
+  let isGclidValid = gclid && new Date().getTime() < gclid.expiryDate;
+
+  if (gclid && isGclidValid) {
+    gclidFormFields.forEach(function (field) {
+      let currGclidFormFields = document.querySelectorAll(`input[name='${field}']`);
+
+      currGclidFormFields.forEach(function (gInput) {
+        gInput.value = gclid.value;
+      });
+    });
+  }
+}
+
+window.addEventListener('load', addGclid);
+</script>
+</body>
+</html>

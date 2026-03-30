@@ -1,0 +1,19 @@
+ply
+format ascii 1.0
+comment simple point cloud cube
+element vertex 8
+property float x
+property float y
+property float z
+property uchar red
+property uchar green
+property uchar blue
+end_header
+-1 -1 -1 255 180 180
+1 -1 -1 255 200 180
+1 1 -1 255 220 180
+-1 1 -1 255 200 200
+-1 -1 1 180 220 255
+1 -1 1 180 200 255
+1 1 1 180 180 255
+-1 1 1 200 180 255
