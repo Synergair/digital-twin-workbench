@@ -23,6 +23,8 @@ interface GoogleMapsEmbedProps {
   zoom?: number;
   markers?: MapMarker[];
   showControls?: boolean;
+  showMapTypeToggle?: boolean;
+  showStreetViewToggle?: boolean;
   mapType?: 'roadmap' | 'satellite' | 'hybrid' | 'terrain';
   className?: string;
   onMarkerClick?: (marker: MapMarker) => void;
@@ -44,6 +46,8 @@ export function GoogleMapsEmbed({
   zoom = 15,
   markers = [],
   showControls = true,
+  showMapTypeToggle = false,
+  showStreetViewToggle = false,
   mapType = 'roadmap',
   className = '',
   onMarkerClick,
@@ -52,8 +56,11 @@ export function GoogleMapsEmbed({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
+  const streetViewRef = useRef<google.maps.StreetViewPanorama | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentMapType, setCurrentMapType] = useState(mapType);
+  const [isStreetView, setIsStreetView] = useState(false);
 
   // Load Google Maps API
   useEffect(() => {
@@ -100,11 +107,11 @@ export function GoogleMapsEmbed({
     const map = new window.google.maps.Map(mapRef.current, {
       center,
       zoom,
-      mapTypeId: mapType,
+      mapTypeId: currentMapType,
       disableDefaultUI: !showControls,
       zoomControl: showControls,
-      mapTypeControl: showControls,
-      streetViewControl: false,
+      mapTypeControl: false, // We use custom controls
+      streetViewControl: false, // We use custom toggle
       fullscreenControl: showControls,
       styles: [
         {
@@ -127,6 +134,13 @@ export function GoogleMapsEmbed({
 
     mapInstanceRef.current = map;
 
+    // Initialize Street View panorama
+    const streetView = map.getStreetView();
+    streetViewRef.current = streetView;
+    streetView.addListener('visible_changed', () => {
+      setIsStreetView(streetView.getVisible());
+    });
+
     if (onMapClick) {
       map.addListener('click', (e: google.maps.MapMouseEvent) => {
         if (e.latLng) {
@@ -140,7 +154,29 @@ export function GoogleMapsEmbed({
       markersRef.current.forEach((m) => m.setMap(null));
       markersRef.current = [];
     };
-  }, [isLoaded, center.lat, center.lng, zoom, mapType, showControls, onMapClick]);
+  }, [isLoaded, center.lat, center.lng, zoom, currentMapType, showControls, onMapClick]);
+
+  // Toggle map type
+  const handleMapTypeToggle = useCallback(() => {
+    if (!mapInstanceRef.current) return;
+    const newType = currentMapType === 'roadmap' ? 'satellite' : 'roadmap';
+    setCurrentMapType(newType);
+    mapInstanceRef.current.setMapTypeId(newType);
+  }, [currentMapType]);
+
+  // Toggle Street View
+  const handleStreetViewToggle = useCallback(() => {
+    if (!streetViewRef.current || !mapInstanceRef.current) return;
+    if (isStreetView) {
+      streetViewRef.current.setVisible(false);
+    } else {
+      const mapCenter = mapInstanceRef.current.getCenter();
+      if (mapCenter) {
+        streetViewRef.current.setPosition(mapCenter);
+        streetViewRef.current.setVisible(true);
+      }
+    }
+  }, [isStreetView]);
 
   // Update markers
   useEffect(() => {
@@ -218,6 +254,48 @@ export function GoogleMapsEmbed({
             <div className="mb-2 h-6 w-6 animate-spin rounded-full border-2 border-[var(--semantic-primary)] border-t-transparent" />
             <p className="text-sm text-[var(--semantic-text-subtle)]">Loading map...</p>
           </div>
+        </div>
+      )}
+      {/* Map controls overlay */}
+      {isLoaded && (showMapTypeToggle || showStreetViewToggle) && (
+        <div className="absolute bottom-3 left-3 flex gap-2">
+          {showMapTypeToggle && (
+            <button
+              onClick={handleMapTypeToggle}
+              className="flex items-center gap-1.5 rounded-lg bg-white/95 px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:shadow-lg"
+            >
+              {currentMapType === 'roadmap' ? (
+                <>
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Satellite
+                </>
+              ) : (
+                <>
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  Map
+                </>
+              )}
+            </button>
+          )}
+          {showStreetViewToggle && (
+            <button
+              onClick={handleStreetViewToggle}
+              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium shadow-md backdrop-blur-sm transition-all hover:shadow-lg ${
+                isStreetView
+                  ? 'bg-[var(--semantic-primary)] text-white hover:bg-[var(--semantic-primary-hover)]'
+                  : 'bg-white/95 text-gray-700 hover:bg-white'
+              }`}
+            >
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              Street View
+            </button>
+          )}
         </div>
       )}
     </div>

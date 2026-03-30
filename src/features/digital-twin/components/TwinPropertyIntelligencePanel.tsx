@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import Badge from '@/components/ui/badge';
 import { V2Surface, V2StatusPill } from '@/components/dashboard/v2/primitives';
-import { GoogleMapsEmbed } from '@/components/maps/GoogleMapsEmbed';
+import { GoogleMapsEmbed, type MapMarker } from '@/components/maps/GoogleMapsEmbed';
+import { NearbyPlaces, NearbyPlacesCompact } from '@/components/maps/NearbyPlaces';
 import { useOwnerPropertiesStore } from '@/store/ownerPropertiesStore';
 import {
   useIntelligenceAggregate,
@@ -13,6 +15,7 @@ import {
   useIntelligencePredictions,
   useIntelligenceSearch,
 } from '@/hooks/usePropertyIntelligence';
+import { useNearbyPlacesByCategory, type LatLng, PLACE_CATEGORIES } from '@/hooks/useGoogleMaps';
 import { intelligenceRuntime } from '@/lib/api/intelligence';
 
 const formatCurrency = (value?: number | null) => {
@@ -38,6 +41,7 @@ export function TwinPropertyIntelligencePanel({ propertyId }: { propertyId: stri
   const address = property
     ? `${property.address.street}, ${property.address.city}, ${property.address.province}`
     : '';
+  const [showNearbyOnMap, setShowNearbyOnMap] = useState(true);
 
   const searchQuery = useIntelligenceSearch({
     query: address,
@@ -68,6 +72,47 @@ export function TwinPropertyIntelligencePanel({ propertyId }: { propertyId: stri
     city: intelligenceProperty?.city ?? property?.address.city ?? null,
     province: intelligenceProperty?.province ?? property?.address.province ?? null,
   });
+
+  // Location for nearby places
+  const propertyLocation: LatLng | null = intelligenceProperty
+    ? { lat: intelligenceProperty.latitude, lng: intelligenceProperty.longitude }
+    : null;
+
+  // Fetch nearby places for map markers
+  const transitQuery = useNearbyPlacesByCategory(propertyLocation, 'transit', { radius: 800, enabled: showNearbyOnMap });
+  const shoppingQuery = useNearbyPlacesByCategory(propertyLocation, 'shopping', { radius: 500, enabled: showNearbyOnMap });
+
+  // Build map markers including nearby POIs
+  const mapMarkers: MapMarker[] = [
+    {
+      id: 'property',
+      lat: intelligenceProperty?.latitude ?? 45.5017,
+      lng: intelligenceProperty?.longitude ?? -73.5673,
+      title: intelligenceProperty?.address ?? address,
+      type: 'property',
+      info: `${intelligenceProperty?.type ?? 'Property'} - ${formatNumber(intelligenceProperty?.squareFeet)} pi2`,
+    },
+    ...(showNearbyOnMap
+      ? [
+          ...(transitQuery.data ?? []).slice(0, 3).map((place) => ({
+            id: place.placeId,
+            lat: place.location.lat,
+            lng: place.location.lng,
+            title: place.name,
+            type: 'poi' as const,
+            info: `${PLACE_CATEGORIES.transit.icon} ${place.address}`,
+          })),
+          ...(shoppingQuery.data ?? []).slice(0, 2).map((place) => ({
+            id: place.placeId,
+            lat: place.location.lat,
+            lng: place.location.lng,
+            title: place.name,
+            type: 'poi' as const,
+            info: `${PLACE_CATEGORIES.shopping.icon} ${place.address}`,
+          })),
+        ]
+      : []),
+  ];
 
   return (
     <V2Surface
@@ -101,26 +146,47 @@ export function TwinPropertyIntelligencePanel({ propertyId }: { propertyId: stri
           </div>
 
           <div className="rounded-2xl border border-[var(--semantic-border)] bg-[var(--panel-soft)] p-4 text-sm">
-            <p className="text-xs uppercase tracking-[0.08em] text-[var(--semantic-text-subtle)]">Carte</p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs uppercase tracking-[0.08em] text-[var(--semantic-text-subtle)]">Carte</p>
+              <button
+                onClick={() => setShowNearbyOnMap(!showNearbyOnMap)}
+                className={`rounded-full px-2 py-0.5 text-[10px] transition-all ${
+                  showNearbyOnMap
+                    ? 'bg-[var(--semantic-primary)]/10 text-[var(--semantic-primary)]'
+                    : 'bg-gray-100 text-gray-500'
+                }`}
+              >
+                {showNearbyOnMap ? 'POIs On' : 'POIs Off'}
+              </button>
+            </div>
             <GoogleMapsEmbed
               center={{
                 lat: intelligenceProperty?.latitude ?? 45.5017,
                 lng: intelligenceProperty?.longitude ?? -73.5673,
               }}
               zoom={15}
-              markers={[
-                {
-                  id: 'property',
-                  lat: intelligenceProperty?.latitude ?? 45.5017,
-                  lng: intelligenceProperty?.longitude ?? -73.5673,
-                  title: intelligenceProperty?.address ?? address,
-                  type: 'property',
-                  info: `${intelligenceProperty?.type ?? 'Property'} - ${formatNumber(intelligenceProperty?.squareFeet)} pi2`,
-                },
-              ]}
+              markers={mapMarkers}
+              showMapTypeToggle
+              showStreetViewToggle
               className="mt-3 h-44"
             />
+            {propertyLocation && (
+              <NearbyPlacesCompact
+                location={propertyLocation}
+                radius={800}
+                categories={['transit', 'shopping', 'dining']}
+                className="mt-3"
+              />
+            )}
           </div>
+
+          {propertyLocation && (
+            <NearbyPlaces
+              location={propertyLocation}
+              radius={1000}
+              defaultCategory="transit"
+            />
+          )}
 
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-2xl border border-[var(--semantic-border)] bg-[var(--panel-soft)] p-4 text-sm">
