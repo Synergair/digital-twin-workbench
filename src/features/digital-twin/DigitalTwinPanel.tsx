@@ -20,6 +20,8 @@ import { TwinFloorScrubber } from './components/TwinFloorScrubber';
 import { TwinLayerControls } from './components/TwinLayerControls';
 import { TwinModelStudioPanel } from './components/TwinModelStudioPanel';
 import { TwinPropertyIntelligencePanel } from './components/TwinPropertyIntelligencePanel';
+import { TwinEstateExplorerPanel } from './components/TwinEstateExplorerPanel';
+import { TwinIoTDashboard } from './components/TwinIoTDashboard';
 import { TwinPanelRight } from './components/TwinPanelRight';
 import { calculateComplexity, calculateRiskScore, recommendSkills } from './algorithms';
 import type { TwinLayer, TwinPin, TwinTab, TwinView } from './types';
@@ -281,8 +283,17 @@ export function DigitalTwinWorkspace({
         riskScore={riskScore}
       />
       <TwinPropertyIntelligencePanel propertyId={propertyId} />
+      <TwinEstateExplorerPanel
+        propertyName={manifest.address}
+        units={units}
+        selectedUnitId={selectedUnit?.id ?? null}
+        onSelectUnit={selectUnit}
+        onSetFloor={setFloor}
+        onSetView={setView}
+      />
       <BimPipelineCard />
       <TwinModelStudioPanel propertyId={propertyId} />
+      <TwinIoTDashboard propertyId={propertyId} />
       <TwinDataUniversePanel propertyId={propertyId} />
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.618fr)_minmax(320px,0.78fr)]">
