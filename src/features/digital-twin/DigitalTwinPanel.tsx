@@ -129,6 +129,49 @@ export function DigitalTwinWorkspace({
   );
   const riskScore = useMemo(() => calculateRiskScore(pins), [pins]);
 
+  // Model URL resolution - must be before any conditional returns to follow Rules of Hooks
+  const isRenderableModel = (url: string | null) => {
+    if (!url) return false;
+    const normalized = url.toLowerCase();
+    return normalized.endsWith('.glb') || normalized.endsWith('.gltf');
+  };
+  const fallbackModelUrl = '/listing-3d-mockup/models/modern-apartment-building.glb';
+  const usingOverride = isRenderableModel(modelOverrideUrl);
+  const candidateModelUrl = usingOverride
+    ? modelOverrideUrl
+    : isRenderableModel(manifest?.odm_model_url ?? null)
+    ? manifest?.odm_model_url
+    : fallbackModelUrl;
+  const [resolvedModelUrl, setResolvedModelUrl] = useState(candidateModelUrl);
+
+  useEffect(() => {
+    let active = true;
+    const resolveUrl = async () => {
+      if (!candidateModelUrl) {
+        if (active) setResolvedModelUrl(fallbackModelUrl);
+        return;
+      }
+      if (!candidateModelUrl.startsWith('/')) {
+        if (active) setResolvedModelUrl(candidateModelUrl);
+        return;
+      }
+      try {
+        const response = await fetch(candidateModelUrl, { method: 'HEAD' });
+        if (!response.ok) throw new Error('missing model');
+        if (active) setResolvedModelUrl(candidateModelUrl);
+      } catch {
+        if (!active) return;
+        setResolvedModelUrl(fallbackModelUrl);
+        if (usingOverride) {
+          setModelOverrideUrl(null);
+          clearDefaultModelForProperty(propertyId);
+        }
+      }
+    };
+    void resolveUrl();
+    return () => { active = false; };
+  }, [candidateModelUrl, clearDefaultModelForProperty, propertyId, setModelOverrideUrl, usingOverride]);
+
   useEffect(() => {
     if (!manifest) {
       return;
@@ -225,62 +268,6 @@ export function DigitalTwinWorkspace({
   const coveragePercent = manifest.total_units > 0 ? Math.round((coveredUnits / manifest.total_units) * 100) : 0;
   const floorLabel =
     isolatedFloor === null ? 'Tous les étages' : isolatedFloor === 0 ? 'Rez-de-chaussée' : `Étage ${isolatedFloor}`;
-  const isRenderableModel = (url: string | null) => {
-    if (!url) {
-      return false;
-    }
-    const normalized = url.toLowerCase();
-    return normalized.endsWith('.glb') || normalized.endsWith('.gltf');
-  };
-  const fallbackModelUrl = '/listing-3d-mockup/models/modern-apartment-building.glb';
-  const usingOverride = isRenderableModel(modelOverrideUrl);
-  const candidateModelUrl = usingOverride
-    ? modelOverrideUrl
-    : isRenderableModel(manifest.odm_model_url ?? null)
-    ? manifest.odm_model_url
-    : fallbackModelUrl;
-  const [resolvedModelUrl, setResolvedModelUrl] = useState(candidateModelUrl);
-
-  useEffect(() => {
-    let active = true;
-    const resolveUrl = async () => {
-      if (!candidateModelUrl) {
-        if (active) {
-          setResolvedModelUrl(fallbackModelUrl);
-        }
-        return;
-      }
-      if (!candidateModelUrl.startsWith('/')) {
-        if (active) {
-          setResolvedModelUrl(candidateModelUrl);
-        }
-        return;
-      }
-      try {
-        const response = await fetch(candidateModelUrl, { method: 'HEAD' });
-        if (!response.ok) {
-          throw new Error('missing model');
-        }
-        if (active) {
-          setResolvedModelUrl(candidateModelUrl);
-        }
-      } catch {
-        if (!active) {
-          return;
-        }
-        setResolvedModelUrl(fallbackModelUrl);
-        if (usingOverride) {
-          setModelOverrideUrl(null);
-          clearDefaultModelForProperty(propertyId);
-        }
-      }
-    };
-
-    void resolveUrl();
-    return () => {
-      active = false;
-    };
-  }, [candidateModelUrl, clearDefaultModelForProperty, fallbackModelUrl, propertyId, setModelOverrideUrl, usingOverride]);
 
   return (
     <div className={cn('space-y-5', className)}>
