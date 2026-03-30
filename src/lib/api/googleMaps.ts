@@ -1,6 +1,6 @@
 /**
  * Google Maps API Service
- * Provides geocoding, places search, and distance calculations
+ * Uses the JavaScript API for Places (to avoid CORS issues with REST API)
  */
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -36,7 +36,7 @@ export interface PlaceResult {
   openNow?: boolean;
   photos?: string[];
   icon?: string;
-  distance?: number; // meters from search origin
+  distance?: number;
 }
 
 export interface PlaceDetails extends PlaceResult {
@@ -60,32 +60,13 @@ export interface DistanceResult {
   destination: LatLng;
   distance: {
     text: string;
-    value: number; // meters
+    value: number;
   };
   duration: {
     text: string;
-    value: number; // seconds
+    value: number;
   };
   mode: TravelMode;
-}
-
-export interface DirectionsResult {
-  routes: {
-    summary: string;
-    legs: {
-      distance: { text: string; value: number };
-      duration: { text: string; value: number };
-      startAddress: string;
-      endAddress: string;
-      steps: {
-        distance: { text: string; value: number };
-        duration: { text: string; value: number };
-        instructions: string;
-        travelMode: string;
-      }[];
-    }[];
-    overview_polyline: string;
-  }[];
 }
 
 export type TravelMode = 'driving' | 'walking' | 'bicycling' | 'transit';
@@ -120,339 +101,58 @@ export type PlaceType =
   | 'synagogue'
   | 'mosque';
 
-// API request helper
-async function fetchGoogleMapsApi<T>(
-  endpoint: string,
-  params: Record<string, string | number | undefined>
-): Promise<T> {
-  const url = new URL(`https://maps.googleapis.com/maps/api/${endpoint}/json`);
-  url.searchParams.set('key', GOOGLE_MAPS_API_KEY);
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined) {
-      url.searchParams.set(key, String(value));
+// Wait for Google Maps to be loaded
+function waitForGoogleMaps(): Promise<typeof google.maps> {
+  return new Promise((resolve, reject) => {
+    if (window.google?.maps) {
+      resolve(window.google.maps);
+      return;
     }
+
+    let attempts = 0;
+    const maxAttempts = 50;
+    const interval = setInterval(() => {
+      attempts++;
+      if (window.google?.maps) {
+        clearInterval(interval);
+        resolve(window.google.maps);
+      } else if (attempts >= maxAttempts) {
+        clearInterval(interval);
+        reject(new Error('Google Maps failed to load'));
+      }
+    }, 100);
+  });
+}
+
+// Create a hidden map element for PlacesService (required by Google)
+let placesServiceElement: HTMLDivElement | null = null;
+let placesService: google.maps.places.PlacesService | null = null;
+
+async function getPlacesService(): Promise<google.maps.places.PlacesService> {
+  await waitForGoogleMaps();
+
+  if (placesService) {
+    return placesService;
+  }
+
+  if (!placesServiceElement) {
+    placesServiceElement = document.createElement('div');
+    placesServiceElement.style.display = 'none';
+    document.body.appendChild(placesServiceElement);
+  }
+
+  const map = new window.google.maps.Map(placesServiceElement, {
+    center: { lat: 0, lng: 0 },
+    zoom: 1,
   });
 
-  const response = await fetch(url.toString());
-  if (!response.ok) {
-    throw new Error(`Google Maps API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  if (data.status && data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-    throw new Error(`Google Maps API error: ${data.status} - ${data.error_message || 'Unknown error'}`);
-  }
-
-  return data;
-}
-
-// Geocoding: Address to Coordinates
-export async function geocodeAddress(address: string): Promise<GeocodingResult | null> {
-  interface GeocodingResponse {
-    status: string;
-    results: {
-      formatted_address: string;
-      geometry: {
-        location: { lat: number; lng: number };
-      };
-      place_id: string;
-      types: string[];
-      address_components: {
-        long_name: string;
-        short_name: string;
-        types: string[];
-      }[];
-    }[];
-  }
-
-  const data = await fetchGoogleMapsApi<GeocodingResponse>('geocode', { address });
-
-  if (!data.results || data.results.length === 0) {
-    return null;
-  }
-
-  const result = data.results[0];
-  return {
-    address,
-    formattedAddress: result.formatted_address,
-    location: result.geometry.location,
-    placeId: result.place_id,
-    types: result.types,
-    addressComponents: result.address_components,
-  };
-}
-
-// Reverse Geocoding: Coordinates to Address
-export async function reverseGeocode(location: LatLng): Promise<GeocodingResult | null> {
-  interface GeocodingResponse {
-    status: string;
-    results: {
-      formatted_address: string;
-      geometry: {
-        location: { lat: number; lng: number };
-      };
-      place_id: string;
-      types: string[];
-      address_components: {
-        long_name: string;
-        short_name: string;
-        types: string[];
-      }[];
-    }[];
-  }
-
-  const data = await fetchGoogleMapsApi<GeocodingResponse>('geocode', {
-    latlng: `${location.lat},${location.lng}`,
-  });
-
-  if (!data.results || data.results.length === 0) {
-    return null;
-  }
-
-  const result = data.results[0];
-  return {
-    address: result.formatted_address,
-    formattedAddress: result.formatted_address,
-    location: result.geometry.location,
-    placeId: result.place_id,
-    types: result.types,
-    addressComponents: result.address_components,
-  };
-}
-
-// Nearby Places Search
-export async function searchNearbyPlaces(
-  location: LatLng,
-  options: {
-    radius?: number; // meters, default 1000
-    type?: PlaceType;
-    keyword?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    openNow?: boolean;
-  } = {}
-): Promise<PlaceResult[]> {
-  interface PlacesResponse {
-    status: string;
-    results: {
-      place_id: string;
-      name: string;
-      vicinity: string;
-      geometry: { location: { lat: number; lng: number } };
-      types: string[];
-      rating?: number;
-      user_ratings_total?: number;
-      price_level?: number;
-      opening_hours?: { open_now: boolean };
-      photos?: { photo_reference: string }[];
-      icon?: string;
-    }[];
-  }
-
-  const params: Record<string, string | number | undefined> = {
-    location: `${location.lat},${location.lng}`,
-    radius: options.radius || 1000,
-    type: options.type,
-    keyword: options.keyword,
-    minprice: options.minPrice,
-    maxprice: options.maxPrice,
-    opennow: options.openNow ? 'true' : undefined,
-  };
-
-  const data = await fetchGoogleMapsApi<PlacesResponse>('place/nearbysearch', params);
-
-  return (data.results || []).map((place) => ({
-    placeId: place.place_id,
-    name: place.name,
-    address: place.vicinity,
-    location: place.geometry.location,
-    types: place.types,
-    rating: place.rating,
-    userRatingsTotal: place.user_ratings_total,
-    priceLevel: place.price_level,
-    openNow: place.opening_hours?.open_now,
-    photos: place.photos?.map(
-      (p) =>
-        `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${p.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
-    ),
-    icon: place.icon,
-    distance: calculateDistance(location, place.geometry.location),
-  }));
-}
-
-// Text Search for Places
-export async function searchPlacesByText(
-  query: string,
-  options: {
-    location?: LatLng;
-    radius?: number;
-    type?: PlaceType;
-    minPrice?: number;
-    maxPrice?: number;
-    openNow?: boolean;
-  } = {}
-): Promise<PlaceResult[]> {
-  interface PlacesResponse {
-    status: string;
-    results: {
-      place_id: string;
-      name: string;
-      formatted_address: string;
-      geometry: { location: { lat: number; lng: number } };
-      types: string[];
-      rating?: number;
-      user_ratings_total?: number;
-      price_level?: number;
-      opening_hours?: { open_now: boolean };
-      photos?: { photo_reference: string }[];
-      icon?: string;
-    }[];
-  }
-
-  const params: Record<string, string | number | undefined> = {
-    query,
-    location: options.location ? `${options.location.lat},${options.location.lng}` : undefined,
-    radius: options.radius,
-    type: options.type,
-    minprice: options.minPrice,
-    maxprice: options.maxPrice,
-    opennow: options.openNow ? 'true' : undefined,
-  };
-
-  const data = await fetchGoogleMapsApi<PlacesResponse>('place/textsearch', params);
-
-  return (data.results || []).map((place) => ({
-    placeId: place.place_id,
-    name: place.name,
-    address: place.formatted_address,
-    location: place.geometry.location,
-    types: place.types,
-    rating: place.rating,
-    userRatingsTotal: place.user_ratings_total,
-    priceLevel: place.price_level,
-    openNow: place.opening_hours?.open_now,
-    photos: place.photos?.map(
-      (p) =>
-        `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${p.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
-    ),
-    icon: place.icon,
-    distance: options.location ? calculateDistance(options.location, place.geometry.location) : undefined,
-  }));
-}
-
-// Place Details
-export async function getPlaceDetails(placeId: string): Promise<PlaceDetails | null> {
-  interface PlaceDetailsResponse {
-    status: string;
-    result?: {
-      place_id: string;
-      name: string;
-      formatted_address: string;
-      geometry: { location: { lat: number; lng: number } };
-      types: string[];
-      rating?: number;
-      user_ratings_total?: number;
-      price_level?: number;
-      opening_hours?: {
-        weekday_text: string[];
-        open_now: boolean;
-      };
-      formatted_phone_number?: string;
-      website?: string;
-      url?: string;
-      reviews?: {
-        author_name: string;
-        rating: number;
-        text: string;
-        time: number;
-      }[];
-      photos?: { photo_reference: string }[];
-      icon?: string;
-    };
-  }
-
-  const data = await fetchGoogleMapsApi<PlaceDetailsResponse>('place/details', {
-    place_id: placeId,
-    fields:
-      'place_id,name,formatted_address,geometry,types,rating,user_ratings_total,price_level,opening_hours,formatted_phone_number,website,url,reviews,photos,icon',
-  });
-
-  if (!data.result) {
-    return null;
-  }
-
-  const place = data.result;
-  return {
-    placeId: place.place_id,
-    name: place.name,
-    address: place.formatted_address,
-    location: place.geometry.location,
-    types: place.types,
-    rating: place.rating,
-    userRatingsTotal: place.user_ratings_total,
-    priceLevel: place.price_level,
-    openNow: place.opening_hours?.open_now,
-    photos: place.photos?.map(
-      (p) =>
-        `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${p.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
-    ),
-    icon: place.icon,
-    phoneNumber: place.formatted_phone_number,
-    website: place.website,
-    url: place.url,
-    reviews: place.reviews?.map((r) => ({
-      authorName: r.author_name,
-      rating: r.rating,
-      text: r.text,
-      time: r.time,
-    })),
-    openingHours: place.opening_hours
-      ? {
-          weekdayText: place.opening_hours.weekday_text,
-          isOpen: place.opening_hours.open_now,
-        }
-      : undefined,
-  };
-}
-
-// Distance Matrix
-export async function getDistanceMatrix(
-  origins: LatLng[],
-  destinations: LatLng[],
-  mode: TravelMode = 'driving'
-): Promise<DistanceResult[][]> {
-  interface DistanceMatrixResponse {
-    status: string;
-    rows: {
-      elements: {
-        status: string;
-        distance?: { text: string; value: number };
-        duration?: { text: string; value: number };
-      }[];
-    }[];
-  }
-
-  const data = await fetchGoogleMapsApi<DistanceMatrixResponse>('distancematrix', {
-    origins: origins.map((o) => `${o.lat},${o.lng}`).join('|'),
-    destinations: destinations.map((d) => `${d.lat},${d.lng}`).join('|'),
-    mode,
-  });
-
-  return data.rows.map((row, i) =>
-    row.elements.map((element, j) => ({
-      origin: origins[i],
-      destination: destinations[j],
-      distance: element.distance || { text: 'N/A', value: 0 },
-      duration: element.duration || { text: 'N/A', value: 0 },
-      mode,
-    }))
-  );
+  placesService = new window.google.maps.places.PlacesService(map);
+  return placesService;
 }
 
 // Simple Distance Calculation (Haversine formula)
 export function calculateDistance(point1: LatLng, point2: LatLng): number {
-  const R = 6371e3; // Earth's radius in meters
+  const R = 6371e3;
   const lat1Rad = (point1.lat * Math.PI) / 180;
   const lat2Rad = (point2.lat * Math.PI) / 180;
   const deltaLat = ((point2.lat - point1.lat) * Math.PI) / 180;
@@ -463,7 +163,7 @@ export function calculateDistance(point1: LatLng, point2: LatLng): number {
     Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return R * c; // Distance in meters
+  return R * c;
 }
 
 // Format distance for display
@@ -485,6 +185,286 @@ export function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const mins = Math.round((seconds % 3600) / 60);
   return `${hours}h ${mins}m`;
+}
+
+// Nearby Places Search using JavaScript API
+export async function searchNearbyPlaces(
+  location: LatLng,
+  options: {
+    radius?: number;
+    type?: PlaceType;
+    keyword?: string;
+  } = {}
+): Promise<PlaceResult[]> {
+  const service = await getPlacesService();
+  const maps = await waitForGoogleMaps();
+
+  return new Promise((resolve, reject) => {
+    const request: google.maps.places.PlaceSearchRequest = {
+      location: new maps.LatLng(location.lat, location.lng),
+      radius: options.radius || 1000,
+      type: options.type,
+      keyword: options.keyword,
+    };
+
+    service.nearbySearch(request, (results, status) => {
+      if (status === maps.places.PlacesServiceStatus.OK && results) {
+        const places: PlaceResult[] = results.map((place) => ({
+          placeId: place.place_id || '',
+          name: place.name || '',
+          address: place.vicinity || '',
+          location: {
+            lat: place.geometry?.location?.lat() || 0,
+            lng: place.geometry?.location?.lng() || 0,
+          },
+          types: place.types || [],
+          rating: place.rating,
+          userRatingsTotal: place.user_ratings_total,
+          priceLevel: place.price_level,
+          openNow: place.opening_hours?.isOpen?.(),
+          icon: place.icon,
+          distance: calculateDistance(location, {
+            lat: place.geometry?.location?.lat() || 0,
+            lng: place.geometry?.location?.lng() || 0,
+          }),
+        }));
+
+        // Sort by distance
+        places.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+        resolve(places);
+      } else if (status === maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+        resolve([]);
+      } else {
+        reject(new Error(`Places search failed: ${status}`));
+      }
+    });
+  });
+}
+
+// Text Search for Places
+export async function searchPlacesByText(
+  query: string,
+  options: {
+    location?: LatLng;
+    radius?: number;
+  } = {}
+): Promise<PlaceResult[]> {
+  const service = await getPlacesService();
+  const maps = await waitForGoogleMaps();
+
+  return new Promise((resolve, reject) => {
+    const request: google.maps.places.TextSearchRequest = {
+      query,
+      location: options.location ? new maps.LatLng(options.location.lat, options.location.lng) : undefined,
+      radius: options.radius,
+    };
+
+    service.textSearch(request, (results, status) => {
+      if (status === maps.places.PlacesServiceStatus.OK && results) {
+        const places: PlaceResult[] = results.map((place) => ({
+          placeId: place.place_id || '',
+          name: place.name || '',
+          address: place.formatted_address || '',
+          location: {
+            lat: place.geometry?.location?.lat() || 0,
+            lng: place.geometry?.location?.lng() || 0,
+          },
+          types: place.types || [],
+          rating: place.rating,
+          userRatingsTotal: place.user_ratings_total,
+          priceLevel: place.price_level,
+          openNow: place.opening_hours?.isOpen?.(),
+          icon: place.icon,
+          distance: options.location
+            ? calculateDistance(options.location, {
+                lat: place.geometry?.location?.lat() || 0,
+                lng: place.geometry?.location?.lng() || 0,
+              })
+            : undefined,
+        }));
+
+        if (options.location) {
+          places.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+        }
+        resolve(places);
+      } else if (status === maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+        resolve([]);
+      } else {
+        reject(new Error(`Text search failed: ${status}`));
+      }
+    });
+  });
+}
+
+// Place Details
+export async function getPlaceDetails(placeId: string): Promise<PlaceDetails | null> {
+  const service = await getPlacesService();
+  const maps = await waitForGoogleMaps();
+
+  return new Promise((resolve, reject) => {
+    const request: google.maps.places.PlaceDetailsRequest = {
+      placeId,
+      fields: [
+        'place_id',
+        'name',
+        'formatted_address',
+        'geometry',
+        'types',
+        'rating',
+        'user_ratings_total',
+        'price_level',
+        'opening_hours',
+        'formatted_phone_number',
+        'website',
+        'url',
+        'reviews',
+        'icon',
+      ],
+    };
+
+    service.getDetails(request, (place, status) => {
+      if (status === maps.places.PlacesServiceStatus.OK && place) {
+        resolve({
+          placeId: place.place_id || '',
+          name: place.name || '',
+          address: place.formatted_address || '',
+          location: {
+            lat: place.geometry?.location?.lat() || 0,
+            lng: place.geometry?.location?.lng() || 0,
+          },
+          types: place.types || [],
+          rating: place.rating,
+          userRatingsTotal: place.user_ratings_total,
+          priceLevel: place.price_level,
+          openNow: place.opening_hours?.isOpen?.(),
+          icon: place.icon,
+          phoneNumber: place.formatted_phone_number,
+          website: place.website,
+          url: place.url,
+          reviews: place.reviews?.map((r) => ({
+            authorName: r.author_name || '',
+            rating: r.rating || 0,
+            text: r.text || '',
+            time: r.time || 0,
+          })),
+          openingHours: place.opening_hours
+            ? {
+                weekdayText: place.opening_hours.weekday_text || [],
+                isOpen: place.opening_hours.isOpen?.() || false,
+              }
+            : undefined,
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  });
+}
+
+// Geocoding using Geocoder service
+export async function geocodeAddress(address: string): Promise<GeocodingResult | null> {
+  const maps = await waitForGoogleMaps();
+  const geocoder = new maps.Geocoder();
+
+  return new Promise((resolve, reject) => {
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === maps.GeocoderStatus.OK && results && results[0]) {
+        const result = results[0];
+        resolve({
+          address,
+          formattedAddress: result.formatted_address,
+          location: {
+            lat: result.geometry.location.lat(),
+            lng: result.geometry.location.lng(),
+          },
+          placeId: result.place_id,
+          types: result.types,
+          addressComponents: result.address_components.map((c) => ({
+            long_name: c.long_name,
+            short_name: c.short_name,
+            types: c.types,
+          })),
+        });
+      } else if (status === maps.GeocoderStatus.ZERO_RESULTS) {
+        resolve(null);
+      } else {
+        reject(new Error(`Geocoding failed: ${status}`));
+      }
+    });
+  });
+}
+
+// Reverse Geocoding
+export async function reverseGeocode(location: LatLng): Promise<GeocodingResult | null> {
+  const maps = await waitForGoogleMaps();
+  const geocoder = new maps.Geocoder();
+
+  return new Promise((resolve, reject) => {
+    geocoder.geocode({ location }, (results, status) => {
+      if (status === maps.GeocoderStatus.OK && results && results[0]) {
+        const result = results[0];
+        resolve({
+          address: result.formatted_address,
+          formattedAddress: result.formatted_address,
+          location,
+          placeId: result.place_id,
+          types: result.types,
+          addressComponents: result.address_components.map((c) => ({
+            long_name: c.long_name,
+            short_name: c.short_name,
+            types: c.types,
+          })),
+        });
+      } else if (status === maps.GeocoderStatus.ZERO_RESULTS) {
+        resolve(null);
+      } else {
+        reject(new Error(`Reverse geocoding failed: ${status}`));
+      }
+    });
+  });
+}
+
+// Distance Matrix
+export async function getDistanceMatrix(
+  origins: LatLng[],
+  destinations: LatLng[],
+  mode: TravelMode = 'driving'
+): Promise<DistanceResult[][]> {
+  const maps = await waitForGoogleMaps();
+  const service = new maps.DistanceMatrixService();
+
+  const travelModeMap: Record<TravelMode, google.maps.TravelMode> = {
+    driving: maps.TravelMode.DRIVING,
+    walking: maps.TravelMode.WALKING,
+    bicycling: maps.TravelMode.BICYCLING,
+    transit: maps.TravelMode.TRANSIT,
+  };
+
+  return new Promise((resolve, reject) => {
+    service.getDistanceMatrix(
+      {
+        origins: origins.map((o) => new maps.LatLng(o.lat, o.lng)),
+        destinations: destinations.map((d) => new maps.LatLng(d.lat, d.lng)),
+        travelMode: travelModeMap[mode],
+      },
+      (response, status) => {
+        if (status === maps.DistanceMatrixStatus.OK && response) {
+          const results: DistanceResult[][] = response.rows.map((row, i) =>
+            row.elements.map((element, j) => ({
+              origin: origins[i],
+              destination: destinations[j],
+              distance: element.distance || { text: 'N/A', value: 0 },
+              duration: element.duration || { text: 'N/A', value: 0 },
+              mode,
+            }))
+          );
+          resolve(results);
+        } else {
+          reject(new Error(`Distance matrix failed: ${status}`));
+        }
+      }
+    );
+  });
 }
 
 // Get static map URL
