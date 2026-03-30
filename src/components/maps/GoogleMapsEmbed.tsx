@@ -61,6 +61,7 @@ export function GoogleMapsEmbed({
   const [error, setError] = useState<string | null>(null);
   const [currentMapType, setCurrentMapType] = useState(mapType);
   const [isStreetView, setIsStreetView] = useState(false);
+  const [streetViewStatus, setStreetViewStatus] = useState<'idle' | 'loading' | 'unavailable'>('idle');
 
   // Load Google Maps API
   useEffect(() => {
@@ -166,14 +167,32 @@ export function GoogleMapsEmbed({
 
   // Toggle Street View
   const handleStreetViewToggle = useCallback(() => {
-    if (!streetViewRef.current || !mapInstanceRef.current) return;
+    if (!streetViewRef.current || !mapInstanceRef.current || !window.google?.maps) return;
+
     if (isStreetView) {
       streetViewRef.current.setVisible(false);
+      setStreetViewStatus('idle');
     } else {
       const mapCenter = mapInstanceRef.current.getCenter();
       if (mapCenter) {
-        streetViewRef.current.setPosition(mapCenter);
-        streetViewRef.current.setVisible(true);
+        setStreetViewStatus('loading');
+
+        // Check if Street View is available at this location
+        const streetViewService = new window.google.maps.StreetViewService();
+        streetViewService.getPanorama(
+          { location: mapCenter, radius: 50 },
+          (data, status) => {
+            if (status === window.google.maps.StreetViewStatus.OK && data?.location?.latLng) {
+              streetViewRef.current?.setPosition(data.location.latLng);
+              streetViewRef.current?.setPov({ heading: 0, pitch: 0 });
+              streetViewRef.current?.setVisible(true);
+              setStreetViewStatus('idle');
+            } else {
+              setStreetViewStatus('unavailable');
+              setTimeout(() => setStreetViewStatus('idle'), 2000);
+            }
+          }
+        );
       }
     }
   }, [isStreetView]);
@@ -284,16 +303,23 @@ export function GoogleMapsEmbed({
           {showStreetViewToggle && (
             <button
               onClick={handleStreetViewToggle}
-              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium shadow-md backdrop-blur-sm transition-all hover:shadow-lg ${
+              disabled={streetViewStatus === 'loading'}
+              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium shadow-md backdrop-blur-sm transition-all hover:shadow-lg disabled:opacity-70 ${
                 isStreetView
                   ? 'bg-[var(--semantic-primary)] text-white hover:bg-[var(--semantic-primary-hover)]'
-                  : 'bg-white/95 text-gray-700 hover:bg-white'
+                  : streetViewStatus === 'unavailable'
+                    ? 'bg-amber-100 text-amber-700'
+                    : 'bg-white/95 text-gray-700 hover:bg-white'
               }`}
             >
-              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              Street View
+              {streetViewStatus === 'loading' ? (
+                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : (
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              )}
+              {streetViewStatus === 'unavailable' ? 'No Coverage' : 'Street View'}
             </button>
           )}
         </div>
