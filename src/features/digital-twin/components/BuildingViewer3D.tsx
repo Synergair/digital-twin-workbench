@@ -426,6 +426,7 @@ export function BuildingViewer3D({
   activeTab,
   pinDropMode,
   readOnly,
+  isDarkMode = true,
   onSelectUnit,
   onHoverUnit,
   onCreatePin,
@@ -444,8 +445,9 @@ export function BuildingViewer3D({
   activeTab: TwinTab;
   pinDropMode: boolean;
   readOnly: boolean;
-  onSelectUnit: (unitId: string) => void;
-  onHoverUnit: (unitId: string | null) => void;
+  isDarkMode?: boolean;
+  onSelectUnit: (unitId: string | null, screenX?: number, screenY?: number) => void;
+  onHoverUnit: (unitId: string | null, screenX?: number, screenY?: number) => void;
   onCreatePin: (point: { x: number; y: number; z: number }, unitId: string) => void;
 }) {
   const canvasId = useId().replace(/:/g, '-');
@@ -539,8 +541,17 @@ export function BuildingViewer3D({
         viewer.cameraControl.doublePickFlyTo = false;
         viewer.cameraControl.keyboardEnabledOnlyIfMouseover = true;
         viewer.cameraControl.rotationInertia = 0.12;
-        viewer.scene.selectedMaterial.fillAlpha = 0.12;
-        viewer.scene.highlightMaterial.fillAlpha = 0.16;
+
+        // 3dtwin-style green selection (like their unit highlighting)
+        viewer.scene.selectedMaterial.fillColor = [0.13, 0.77, 0.37]; // Emerald green
+        viewer.scene.selectedMaterial.fillAlpha = 0.45;
+        viewer.scene.selectedMaterial.edgeColor = [0.13, 0.77, 0.37];
+        viewer.scene.selectedMaterial.edgeAlpha = 1.0;
+
+        // Hover highlight - subtle teal
+        viewer.scene.highlightMaterial.fillColor = [0.05, 0.58, 0.52]; // Teal
+        viewer.scene.highlightMaterial.fillAlpha = 0.25;
+        viewer.scene.highlightMaterial.edgeColor = [0.05, 0.8, 0.7];
         viewer.scene.highlightMaterial.edgeAlpha = 0.95;
 
         const navCube = new xeokit.NavCubePlugin(viewer, {
@@ -594,7 +605,7 @@ export function BuildingViewer3D({
             viewer.scene.setObjectsHighlighted([runtime.hoveredObjectId], false);
             runtime.hoveredObjectId = null;
           }
-          onHoverUnitRef.current(null);
+          onHoverUnitRef.current(null, undefined, undefined);
         });
 
         cleanupHoverEnter = viewer.cameraControl.on('hoverEnter', (pickResult: any) => {
@@ -613,7 +624,11 @@ export function BuildingViewer3D({
 
           if (pickResult.worldPos) {
             const closest = getClosestUnit(Array.from(pickResult.worldPos), unitsRef.current, runtime.modelAabb);
-            onHoverUnitRef.current(closest?.id ?? null);
+            // Get screen coordinates from canvas position
+            const canvasPos = pickResult.canvasPos;
+            const screenX = canvasPos ? canvasPos[0] : undefined;
+            const screenY = canvasPos ? canvasPos[1] : undefined;
+            onHoverUnitRef.current(closest?.id ?? null, screenX, screenY);
           }
         });
 
@@ -630,8 +645,13 @@ export function BuildingViewer3D({
             return;
           }
 
+          // Get screen coordinates from canvas position
+          const canvasPos = pickResult.canvasPos;
+          const screenX = canvasPos ? canvasPos[0] : undefined;
+          const screenY = canvasPos ? canvasPos[1] : undefined;
+
           if (closestUnit) {
-            onSelectUnitRef.current(closestUnit.id);
+            onSelectUnitRef.current(closestUnit.id, screenX, screenY);
           }
 
           if (runtime.selectedObjectId) {
@@ -853,6 +873,45 @@ export function BuildingViewer3D({
     runtime.viewer.camera.look = center;
     runtime.viewer.cameraControl.pivotPos = center;
   }, [activeView, selectedUnitId, status, units]);
+
+  // Day/Night lighting effect
+  useEffect(() => {
+    const runtime = runtimeRef.current;
+    if (!runtime?.viewer || status !== 'ready') {
+      return;
+    }
+
+    const { scene } = runtime.viewer;
+    const lights = scene.lights;
+
+    // Find or create ambient and directional lights
+    let ambientLight = Object.values(lights).find((l: any) => l.type === 'ambient');
+    let dirLight = Object.values(lights).find((l: any) => l.type === 'dir');
+
+    if (isDarkMode) {
+      // Night mode - darker ambient, cooler tones, subtle moonlight
+      if (ambientLight) {
+        ambientLight.color = [0.15, 0.18, 0.25];
+        ambientLight.intensity = 0.5;
+      }
+      if (dirLight) {
+        dirLight.color = [0.6, 0.65, 0.8];
+        dirLight.intensity = 0.7;
+      }
+      scene.canvas.backgroundColor = [0.06, 0.09, 0.14];
+    } else {
+      // Day mode - bright ambient, warm tones, strong sunlight
+      if (ambientLight) {
+        ambientLight.color = [1.0, 0.98, 0.95];
+        ambientLight.intensity = 0.9;
+      }
+      if (dirLight) {
+        dirLight.color = [1.0, 0.95, 0.85];
+        dirLight.intensity = 1.2;
+      }
+      scene.canvas.backgroundColor = [0.92, 0.95, 0.98];
+    }
+  }, [isDarkMode, status]);
 
   useEffect(() => {
     const runtime = runtimeRef.current;

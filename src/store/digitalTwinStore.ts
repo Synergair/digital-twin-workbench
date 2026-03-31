@@ -1,5 +1,8 @@
 import { create } from 'zustand';
-import type { TwinLayer, TwinTab, TwinView, TwinSeverity } from '@/features/digital-twin/types';
+import type { TwinLayer, TwinTab, TwinView, TwinSeverity, TwinUnit } from '@/features/digital-twin/types';
+import type { TooltipState } from '@/features/digital-twin/components/viewer/ViewerTooltip';
+import type { FloatingActionState } from '@/features/digital-twin/components/viewer/FloatingActionSystem';
+import type { SpatialQueryResult } from '@/features/digital-twin/components/viewer/SpatialQueryPanel';
 
 const DEFAULT_MODEL_STORAGE_KEY = 'digital-twin-default-models-v1';
 
@@ -64,6 +67,15 @@ interface DigitalTwinState {
   dispatchUnitId: string | null;
   lidarOpen: boolean;
   lidarUnitId: string | null;
+
+  // In-viewer UI state
+  tooltipState: TooltipState | null;
+  floatingActionState: FloatingActionState | null;
+  spatialQueryResult: SpatialQueryResult | null;
+  spatialQueryVisible: boolean;
+  showUnitLabels: boolean;
+  showAlertBadges: boolean;
+  captureWizardOpen: boolean;
   init: (propertyId: string, address: string, odmUrl?: string | null) => void;
   setTab: (tab: TwinTab) => void;
   setView: (view: TwinView) => void;
@@ -92,6 +104,16 @@ interface DigitalTwinState {
   setShowWallTypes: (on: boolean) => void;
   setShowMepRoutes: (on: boolean) => void;
   reset: () => void;
+
+  // In-viewer UI actions
+  setTooltipState: (state: TooltipState | null) => void;
+  setFloatingActionState: (state: FloatingActionState | null) => void;
+  setSpatialQueryResult: (result: SpatialQueryResult | null) => void;
+  setSpatialQueryVisible: (visible: boolean) => void;
+  setShowUnitLabels: (show: boolean) => void;
+  setShowAlertBadges: (show: boolean) => void;
+  openCaptureWizard: () => void;
+  closeCaptureWizard: () => void;
 }
 
 const defaultLayerSet = () =>
@@ -152,6 +174,15 @@ const createInitialState = () => ({
   dispatchUnitId: null,
   lidarOpen: false,
   lidarUnitId: null,
+
+  // In-viewer UI initial state
+  tooltipState: null,
+  floatingActionState: null,
+  spatialQueryResult: null,
+  spatialQueryVisible: false,
+  showUnitLabels: true,
+  showAlertBadges: true,
+  captureWizardOpen: false,
 });
 
 export const useDigitalTwinStore = create<DigitalTwinState>((set) => ({
@@ -264,4 +295,14 @@ export const useDigitalTwinStore = create<DigitalTwinState>((set) => ({
   setShowWallTypes: (showWallTypes) => set({ showWallTypes }),
   setShowMepRoutes: (showMepRoutes) => set({ showMepRoutes }),
   reset: () => set(createInitialState()),
+
+  // In-viewer UI actions
+  setTooltipState: (tooltipState) => set({ tooltipState }),
+  setFloatingActionState: (floatingActionState) => set({ floatingActionState }),
+  setSpatialQueryResult: (spatialQueryResult) => set({ spatialQueryResult, spatialQueryVisible: !!spatialQueryResult }),
+  setSpatialQueryVisible: (spatialQueryVisible) => set({ spatialQueryVisible }),
+  setShowUnitLabels: (showUnitLabels) => set({ showUnitLabels }),
+  setShowAlertBadges: (showAlertBadges) => set({ showAlertBadges }),
+  openCaptureWizard: () => set({ captureWizardOpen: true }),
+  closeCaptureWizard: () => set({ captureWizardOpen: false }),
 }));

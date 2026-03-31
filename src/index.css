@@ -6,26 +6,62 @@
 
 :root {
   color-scheme: light;
+
+  /* Semantic Colors */
   --semantic-text: #0b141c;
   --semantic-text-subtle: #5f6d78;
-  --semantic-border: rgba(12, 24, 33, 0.12);
-  --panel-soft: rgba(247, 249, 251, 0.9);
-  --surface-glass: rgba(255, 255, 255, 0.88);
+  --semantic-text-muted: #8a939c;
+  --semantic-border: rgba(12, 24, 33, 0.08);
+  --semantic-border-strong: rgba(12, 24, 33, 0.14);
+
+  /* Surface Colors - Modern Minimal */
+  --panel-soft: rgba(250, 252, 252, 0.85);
+  --surface-glass: rgba(255, 255, 255, 0.92);
   --surface-strong: #ffffff;
+  --surface-elevated: #ffffff;
+
+  /* Primary Colors */
   --semantic-primary: #0b6b6b;
   --semantic-primary-strong: #118a87;
-  --semantic-primary-soft: rgba(11, 107, 107, 0.12);
+  --semantic-primary-soft: rgba(11, 107, 107, 0.08);
+  --semantic-primary-hover: #0a5c5c;
+
+  /* Accent Colors */
   --accent-ember: #e0523f;
-  --accent-ember-soft: rgba(224, 82, 63, 0.14);
+  --accent-ember-soft: rgba(224, 82, 63, 0.10);
   --accent-sky: #2d92c4;
-  --accent-sky-soft: rgba(45, 146, 196, 0.12);
-  --shadow-soft: 0 18px 45px rgba(7, 18, 26, 0.08);
-  --shadow-strong: 0 28px 70px rgba(7, 18, 26, 0.16);
-  --radius-xl: 28px;
-  --radius-lg: 22px;
-  --radius-md: 16px;
-  --radius-sm: 12px;
-  --ui-grid: rgba(13, 107, 107, 0.08);
+  --accent-sky-soft: rgba(45, 146, 196, 0.10);
+  --accent-success: #10b981;
+  --accent-success-soft: rgba(16, 185, 129, 0.10);
+  --accent-warning: #f59e0b;
+  --accent-warning-soft: rgba(245, 158, 11, 0.10);
+
+  /* Shadows - Reduced for Modern Minimal */
+  --shadow-soft: 0 4px 12px rgba(7, 18, 26, 0.04);
+  --shadow-medium: 0 6px 20px rgba(7, 18, 26, 0.06);
+  --shadow-strong: 0 8px 24px rgba(7, 18, 26, 0.08);
+  --shadow-elevated: 0 12px 32px rgba(7, 18, 26, 0.10);
+
+  /* Border Radius - Tighter for Flatter Design */
+  --radius-xl: 20px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+
+  /* Spacing Scale */
+  --space-section: 32px;
+  --space-panel: 20px;
+  --space-card: 16px;
+  --space-item: 12px;
+  --space-tight: 8px;
+
+  /* Utility */
+  --ui-grid: rgba(13, 107, 107, 0.06);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
 }
 
 * {
@@ -34,37 +70,155 @@
 
 body {
   margin: 0;
-  font-family: 'Space Grotesk', 'Sora', sans-serif;
-  background:
-    radial-gradient(circle at 12% 14%, rgba(17, 138, 135, 0.16), transparent 32%),
-    radial-gradient(circle at 86% 6%, rgba(224, 82, 63, 0.12), transparent 38%),
-    radial-gradient(circle at 50% 90%, rgba(45, 146, 196, 0.12), transparent 42%),
-    linear-gradient(180deg, #f7f8fa 0%, #eef1f4 45%, #f8fafc 100%);
+  font-family: 'Space Grotesk', 'Sora', system-ui, sans-serif;
+  background: linear-gradient(180deg, #f8fafa 0%, #f4f6f8 50%, #f8fafa 100%);
   color: var(--semantic-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Surface Cards - Modern Minimal */
 .surface-card {
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--semantic-border);
   background: var(--surface-glass);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(18px);
 }
 
 .surface-card-strong {
   background: var(--surface-strong);
-  box-shadow: var(--shadow-strong);
+  box-shadow: var(--shadow-medium);
 }
 
+.surface-card-minimal {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--semantic-border);
+  background: var(--surface-glass);
+  box-shadow: none;
+}
+
+.surface-card-elevated {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--semantic-border);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-elevated);
+}
+
+/* Interactive Surface */
+.surface-interactive {
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+.surface-interactive:hover {
+  border-color: var(--semantic-border-strong);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Tab Bar */
+.tab-bar {
+  display: flex;
+  gap: var(--space-tight);
+  padding: var(--space-tight);
+  background: var(--panel-soft);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--semantic-border);
+}
+
+.tab-item {
+  padding: var(--space-tight) var(--space-card);
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--semantic-text-subtle);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tab-item:hover {
+  color: var(--semantic-text);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.tab-item-active {
+  color: var(--semantic-text);
+  background: white;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Metric Badge */
+.metric-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: white;
+  border: 1px solid var(--semantic-border);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.metric-badge-primary {
+  background: var(--semantic-primary-soft);
+  border-color: transparent;
+  color: var(--semantic-primary);
+}
+
+/* Collapsible Section */
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-item) var(--space-card);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.collapsible-header:hover {
+  background: var(--panel-soft);
+}
+
+/* Mono Font */
 .mono {
   font-family: 'IBM Plex Mono', 'Fira Code', monospace;
 }
 
+/* Engineering Grid - Subtler */
 .engineering-grid {
   background-image:
     linear-gradient(var(--ui-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ui-grid) 1px, transparent 1px),
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.18), transparent 40%);
-  background-size: 36px 36px, 36px 36px, auto;
+    linear-gradient(90deg, var(--ui-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
   background-position: center;
+}
+
+/* Section Spacing Utilities */
+.section-spacing {
+  margin-bottom: var(--space-section);
+}
+
+.panel-spacing {
+  margin-bottom: var(--space-panel);
+}
+
+/* Clean Scrollbar */
+.clean-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.clean-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.clean-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--semantic-border-strong);
+  border-radius: 3px;
+}
+
+.clean-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--semantic-text-muted);
 }

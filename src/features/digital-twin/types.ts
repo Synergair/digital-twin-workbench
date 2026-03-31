@@ -137,3 +137,48 @@ export interface TwinLayoutPoint {
   y: number;
   z: number;
 }
+
+// Building Phases Support (like 3dtwin.com multi-phase developments)
+export type BuildingPhaseStatus = 'planning' | 'under_construction' | 'completed' | 'future';
+
+export interface BuildingPhase {
+  id: string;
+  propertyId: string;
+  phaseName: string;
+  phaseNumber: number;
+  status: BuildingPhaseStatus;
+  modelUrl: string | null;
+  startDate: string | null;
+  completionDate: string | null;
+  floors: number;
+  totalUnits: number;
+  description: string | null;
+  thumbnailUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BuildingProject {
+  id: string;
+  name: string;
+  address: string;
+  centroid: { lat: number; lng: number };
+  phases: BuildingPhase[];
+  activePhaseId: string | null;
+  totalFloors: number;
+  totalUnits: number;
+  thumbnailUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Multi-project Portfolio
+export interface Portfolio {
+  id: string;
+  name: string;
+  ownerId: string;
+  projects: BuildingProject[];
+  totalProperties: number;
+  totalAlerts: number;
+  createdAt: string;
+}

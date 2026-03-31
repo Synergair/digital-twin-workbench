@@ -1,15 +1,17 @@
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Building2, Layers3, MapPin } from '@/components/icons/basil-lucide';
 import Breadcrumbs from '@/components/molecules/Breadcrumbs';
 import Badge from '@/components/ui/badge';
 import Button from '@/components/ui/button';
 import { DigitalTwinWorkspace } from '@/features/digital-twin';
+import { TwinShell } from '@/features/digital-twin/components/shell';
 import { useOwnerAccessStore } from '@/store/ownerAccessStore';
 import { useOwnerPropertiesStore } from '@/store/ownerPropertiesStore';
 
 export default function OwnerDigitalTwinPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const { getPropertyById } = useOwnerPropertiesStore();
   const { getCompanyById } = useOwnerAccessStore();
   const property = getPropertyById(id ?? '');
@@ -18,10 +20,19 @@ export default function OwnerDigitalTwinPage() {
     ? `${property.address.street}, ${property.address.city}, ${property.address.province} ${property.address.postalCode}`
     : '';
 
+  // Use new immersive shell when ?shell=true or VITE_NEW_TWIN_SHELL=true
+  const useNewShell = searchParams.get('shell') === 'true' || import.meta.env.VITE_NEW_TWIN_SHELL === 'true';
+
   if (!property) {
     return <Navigate to="/owner/properties" replace />;
   }
 
+  // New immersive 3D-first shell
+  if (useNewShell) {
+    return <TwinShell propertyId={property.id} />;
+  }
+
+  // Legacy layout
   return (
     <div className="space-y-6 p-4 md:p-6">
       <Breadcrumbs
@@ -70,8 +81,12 @@ export default function OwnerDigitalTwinPage() {
             <Button type="button" variant="secondary" onClick={() => navigate(`/owner/properties/${property.id}`)}>
               Aperçu propriété
             </Button>
-            <Button type="button" variant="primary" onClick={() => navigate('/owner/maintenance')}>
-              Ouvrir l’entretien
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => navigate(`/owner/properties/${property.id}/digital-twin?shell=true`)}
+            >
+              Mode immersif
             </Button>
           </div>
         </div>

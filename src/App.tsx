@@ -2,6 +2,7 @@ import { Link, Navigate, Route, Routes, useParams, useSearchParams } from 'react
 import { useState } from 'react';
 import OwnerDigitalTwinPage from './pages/owner/OwnerDigitalTwinPage';
 import TenantDigitalTwinPage from './pages/tenant/TenantDigitalTwinPage';
+import MapExplorerPage from './pages/MapExplorerPage';
 import { DigitalTwinOverview, DigitalTwinWorkspace } from './features/digital-twin';
 import { useOwnerPropertiesStore } from './store/ownerPropertiesStore';
 import { getPersona, personaConfigs } from './features/digital-twin/personas';
@@ -71,8 +72,20 @@ function WorkbenchHome() {
 
       <div className="flex flex-wrap gap-3">
         <Link
-          to={`/workbench/view?persona=${personaId}&property=${DEFAULT_PROPERTY_ID}`}
+          to="/map"
+          className="rounded-full bg-[#0d7377] px-4 py-2 text-sm font-semibold text-white shadow-sm"
+        >
+          Portfolio Map (3dtwin-style)
+        </Link>
+        <Link
+          to={`/owner/properties/${propertyId}/digital-twin?shell=true`}
           className="rounded-full bg-[var(--semantic-primary)] px-4 py-2 text-sm font-semibold text-white shadow-sm"
+        >
+          Immersive Shell View
+        </Link>
+        <Link
+          to={`/workbench/view?persona=${personaId}&property=${DEFAULT_PROPERTY_ID}`}
+          className="rounded-full border border-[var(--semantic-border)] bg-white px-4 py-2 text-sm font-semibold text-[var(--semantic-text)]"
         >
           Ouvrir le workspace (OKey base)
         </Link>
@@ -181,6 +194,8 @@ export default function App() {
       <Route path="/" element={<WorkbenchHome />} />
       <Route path="/workbench" element={<WorkbenchHome />} />
       <Route path="/workbench/view" element={<WorkbenchView />} />
+      <Route path="/map" element={<MapExplorerPage />} />
+      <Route path="/portfolio" element={<MapExplorerPage />} />
       <Route path="/owner/properties" element={<OwnerPropertiesIndex />} />
       <Route path="/owner/properties/:id" element={<OwnerOverviewRoute />} />
       <Route path="/owner/properties/:id/digital-twin" element={<OwnerDigitalTwinPage />} />
