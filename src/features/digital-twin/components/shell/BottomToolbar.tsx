@@ -16,6 +16,68 @@ import {
 } from 'lucide-react';
 import type { TwinLayer, TwinSeverity, TwinTab, TwinView } from '../../types';
 
+const layerGroups: { label: string; layers: { id: TwinLayer; label: string; color: string }[] }[] = [
+  {
+    label: 'MEP Systems',
+    layers: [
+      { id: 'plomberie', label: 'Plomberie', color: '#38bdf8' },
+      { id: 'hvac', label: 'HVAC', color: '#22c55e' },
+      { id: 'electricite', label: 'Électricité', color: '#f59e0b' },
+      { id: 'water', label: 'Eau', color: '#38bdf8' },
+      { id: 'gas', label: 'Gaz', color: '#f59e0b' },
+      { id: 'drainage', label: 'Drainage', color: '#334155' },
+      { id: 'sprinklers', label: 'Gicleurs', color: '#fb7185' },
+    ],
+  },
+  {
+    label: 'Structure',
+    layers: [
+      { id: 'structure', label: 'Structure', color: '#94a3b8' },
+      { id: 'envelope', label: 'Enveloppe', color: '#f97316' },
+      { id: 'roof', label: 'Toiture', color: '#0f766e' },
+      { id: 'solar', label: 'Solaire', color: '#eab308' },
+      { id: 'parking', label: 'Stationnement', color: '#0ea5e9' },
+    ],
+  },
+  {
+    label: 'Circulation',
+    layers: [
+      { id: 'elevators', label: 'Ascenseurs', color: '#a855f7' },
+      { id: 'stairs', label: 'Escaliers', color: '#c084fc' },
+      { id: 'access', label: 'Accès', color: '#14b8a6' },
+      { id: 'communs', label: 'Communs', color: '#64748b' },
+    ],
+  },
+  {
+    label: 'Sécurité',
+    layers: [
+      { id: 'fire', label: 'Incendie', color: '#ef4444' },
+      { id: 'security', label: 'Sécurité', color: '#6366f1' },
+      { id: 'cameras', label: 'Caméras', color: '#c084fc' },
+      { id: 'lighting', label: 'Éclairage', color: '#fde047' },
+    ],
+  },
+  {
+    label: 'Technologie',
+    layers: [
+      { id: 'it', label: 'Réseau IT', color: '#22c55e' },
+      { id: 'sensors', label: 'Capteurs', color: '#22d3ee' },
+      { id: 'internet', label: 'Internet', color: '#3b82f6' },
+    ],
+  },
+  {
+    label: 'Zones',
+    layers: [
+      { id: 'zones', label: 'Zones', color: '#f8fafc' },
+      { id: 'maintenance', label: 'Maintenance', color: '#fb7185' },
+      { id: 'lockers', label: 'Casiers', color: '#a78bfa' },
+      { id: 'pool', label: 'Piscine', color: '#06b6d4' },
+      { id: 'farming', label: 'Agriculture', color: '#84cc16' },
+      { id: 'rooftop3d', label: 'Rooftop', color: '#78716c' },
+    ],
+  },
+];
+
 interface BottomToolbarProps {
   activeView: TwinView;
   activeTab: TwinTab;
@@ -39,6 +101,9 @@ interface BottomToolbarProps {
   onToggleSheet: () => void;
   onToggleUnitLabels?: () => void;
   onOpenMap?: () => void;
+  onToggle2D?: () => void;
+  onToggleInsideView?: () => void;
+  show2D?: boolean;
 }
 
 const viewIcons: Record<TwinView, React.ReactNode> = {
@@ -59,6 +124,7 @@ const viewLabels: Record<TwinView, string> = {
 
 export function BottomToolbar({
   activeView,
+  activeLayers,
   isolatedFloor,
   floors,
   xrayMode,
@@ -68,6 +134,7 @@ export function BottomToolbar({
   showUnitLabels = true,
   onViewChange,
   onFloorChange,
+  onToggleLayer,
   onToggleXray,
   onToggleExploded,
   onTogglePinDrop,
@@ -75,6 +142,9 @@ export function BottomToolbar({
   onToggleSheet,
   onToggleUnitLabels,
   onOpenMap,
+  onToggle2D,
+  onToggleInsideView,
+  show2D = false,
 }: BottomToolbarProps) {
   const [layerMenuOpen, setLayerMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -91,13 +161,19 @@ export function BottomToolbar({
         <div className="flex rounded-lg bg-white/5 p-0.5">
           <button
             type="button"
-            className="rounded-md bg-white/10 px-2.5 py-1.5 text-xs font-medium text-white"
+            onClick={() => { if (show2D && onToggle2D) onToggle2D(); }}
+            className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              !show2D ? 'bg-white/10 text-white' : 'text-white/50 hover:text-white'
+            }`}
           >
             3D
           </button>
           <button
             type="button"
-            className="rounded-md px-2.5 py-1.5 text-xs font-medium text-white/50 hover:text-white"
+            onClick={() => onToggle2D?.()}
+            className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${
+              show2D ? 'bg-teal-600 text-white' : 'text-white/50 hover:text-white'
+            }`}
           >
             2D
           </button>
@@ -107,7 +183,7 @@ export function BottomToolbar({
 
         {/* Camera Presets */}
         <div className="flex gap-0.5">
-          {(['facade', 'dessus', 'cote', 'iso'] as TwinView[]).map((view) => (
+          {(['facade', 'dessus', 'cote', 'iso', 'inside'] as TwinView[]).map((view) => (
             <button
               key={view}
               type="button"
@@ -205,18 +281,56 @@ export function BottomToolbar({
           </button>
 
           {layerMenuOpen && (
-            <div className="absolute bottom-full right-0 mb-2 w-48 rounded-lg border border-white/10 bg-slate-800 p-2 shadow-xl">
-              <p className="mb-2 px-2 text-xs text-white/40">Quick Layers</p>
-              {(['plomberie', 'hvac', 'electricite', 'structure'] as TwinLayer[]).map((layer) => (
-                <button
-                  key={layer}
-                  type="button"
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-white/70 hover:bg-white/10 hover:text-white"
-                >
-                  <span className="h-2 w-2 rounded-full bg-teal-500" />
-                  <span className="capitalize">{layer}</span>
-                </button>
+            <div className="absolute bottom-full right-0 mb-2 max-h-[60vh] w-56 overflow-y-auto rounded-lg border border-white/10 bg-slate-800 p-2 shadow-xl">
+              {layerGroups.map((group) => (
+                <div key={group.label} className="mb-2">
+                  <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-white/30">{group.label}</p>
+                  {group.layers.map((layer) => {
+                    const isActive = activeLayers.has(layer.id);
+                    return (
+                      <button
+                        key={layer.id}
+                        type="button"
+                        onClick={() => onToggleLayer(layer.id)}
+                        className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
+                          isActive ? 'bg-white/10 text-white' : 'text-white/50 hover:bg-white/5 hover:text-white/70'
+                        }`}
+                      >
+                        <span
+                          className="h-2.5 w-2.5 rounded-full border border-white/20"
+                          style={{ backgroundColor: isActive ? layer.color : 'transparent' }}
+                        />
+                        <span className="flex-1 text-xs">{layer.label}</span>
+                        {isActive && <span className="text-[10px] text-teal-400">ON</span>}
+                      </button>
+                    );
+                  })}
+                </div>
               ))}
+              <div className="border-t border-white/10 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    layerGroups.flatMap((g) => g.layers).forEach((l) => {
+                      if (!activeLayers.has(l.id)) onToggleLayer(l.id);
+                    });
+                  }}
+                  className="w-full rounded-md px-2 py-1.5 text-left text-xs text-teal-400 hover:bg-white/5"
+                >
+                  Tout activer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    layerGroups.flatMap((g) => g.layers).forEach((l) => {
+                      if (activeLayers.has(l.id)) onToggleLayer(l.id);
+                    });
+                  }}
+                  className="w-full rounded-md px-2 py-1.5 text-left text-xs text-white/40 hover:bg-white/5"
+                >
+                  Tout désactiver
+                </button>
+              </div>
             </div>
           )}
         </div>

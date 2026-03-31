@@ -56,6 +56,13 @@ const overlayPalette: Record<string, { color: string; rgb: number[]; icon: 'dot'
   lighting: { color: '#fde047', rgb: [0.99, 0.88, 0.28], icon: 'dot' },
   access: { color: '#14b8a6', rgb: [0.08, 0.72, 0.65], icon: 'zone' },
   sensors: { color: '#22d3ee', rgb: [0.13, 0.83, 0.93], icon: 'dot' },
+  communs: { color: '#64748b', rgb: [0.39, 0.45, 0.55], icon: 'zone' },
+  lockers: { color: '#a78bfa', rgb: [0.65, 0.55, 0.98], icon: 'zone' },
+  pool: { color: '#06b6d4', rgb: [0.02, 0.71, 0.83], icon: 'drop' },
+  farming: { color: '#84cc16', rgb: [0.52, 0.8, 0.09], icon: 'dot' },
+  rooftop3d: { color: '#78716c', rgb: [0.47, 0.44, 0.42], icon: 'zone' },
+  internet: { color: '#3b82f6', rgb: [0.23, 0.51, 0.96], icon: 'bolt' },
+  electrical: { color: '#f59e0b', rgb: [0.96, 0.62, 0.04], icon: 'bolt' },
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -567,15 +574,30 @@ export function BuildingViewer3D({
           textColor: '#17393a',
         });
 
-        const gltfLoader = new xeokit.GLTFLoaderPlugin(viewer);
         const sectionPlanes = new xeokit.SectionPlanesPlugin(viewer, { overviewVisible: false });
-        const model = gltfLoader.load({
-          id: 'digitalTwinModel',
-          src: modelUrl,
-          edges: true,
-          autoMetaModel: true,
-          performance: false,
-        });
+        const isIfc = modelUrl.toLowerCase().endsWith('.ifc');
+        let model: any;
+
+        if (isIfc && xeokit.WebIFCLoaderPlugin) {
+          const ifcLoader = new xeokit.WebIFCLoaderPlugin(viewer, {
+            wasmPath: 'https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/',
+          });
+          model = ifcLoader.load({
+            id: 'digitalTwinModel',
+            src: modelUrl,
+            edges: true,
+            loadMetadata: true,
+          });
+        } else {
+          const gltfLoader = new xeokit.GLTFLoaderPlugin(viewer);
+          model = gltfLoader.load({
+            id: 'digitalTwinModel',
+            src: modelUrl,
+            edges: true,
+            autoMetaModel: true,
+            performance: false,
+          });
+        }
 
         const runtime: XeokitRuntime = {
           viewer,
@@ -1015,17 +1037,100 @@ export function BuildingViewer3D({
           const selectedUnit = units.find((unit) => unit.id === selectedUnitId);
           if (selectedUnit) {
             const anchor = getUnitAnchor(selectedUnit, units, workingAabb);
+            const unitW = width * 0.13;
+            const unitD = depth * 0.13;
+            const unitH = floorBand * 0.28;
+
+            // Unit floor
             pushDecoration(
-              createBoxMesh(
-                xeokit,
-                runtime.viewer.scene,
-                withPrefix(`selected-room-${selectedUnit.id}`),
-                [anchor[0], anchor[1], anchor[2] - depth * 0.015],
-                [width * 0.11, floorBand * 0.24, depth * 0.11],
-                [0.36, 0.68, 0.92],
-                0.26,
-              ),
+              createBoxMesh(xeokit, runtime.viewer.scene,
+                withPrefix(`selected-floor-${selectedUnit.id}`),
+                [anchor[0], anchor[1] - unitH * 0.48, anchor[2]],
+                [unitW, 0.02, unitD],
+                [0.85, 0.88, 0.9], 0.5),
             );
+
+            // Unit walls (4 sides)
+            const wallThickness = 0.015;
+            // Front wall
+            pushDecoration(
+              createBoxMesh(xeokit, runtime.viewer.scene,
+                withPrefix(`selected-wall-front-${selectedUnit.id}`),
+                [anchor[0], anchor[1], anchor[2] + unitD * 0.5],
+                [unitW, unitH * 0.5, wallThickness],
+                [0.75, 0.82, 0.88], 0.35),
+            );
+            // Back wall
+            pushDecoration(
+              createBoxMesh(xeokit, runtime.viewer.scene,
+                withPrefix(`selected-wall-back-${selectedUnit.id}`),
+                [anchor[0], anchor[1], anchor[2] - unitD * 0.5],
+                [unitW, unitH * 0.5, wallThickness],
+                [0.75, 0.82, 0.88], 0.35),
+            );
+            // Left wall
+            pushDecoration(
+              createBoxMesh(xeokit, runtime.viewer.scene,
+                withPrefix(`selected-wall-left-${selectedUnit.id}`),
+                [anchor[0] - unitW * 0.5, anchor[1], anchor[2]],
+                [wallThickness, unitH * 0.5, unitD],
+                [0.75, 0.82, 0.88], 0.35),
+            );
+            // Right wall (partial - door opening)
+            pushDecoration(
+              createBoxMesh(xeokit, runtime.viewer.scene,
+                withPrefix(`selected-wall-right-${selectedUnit.id}`),
+                [anchor[0] + unitW * 0.5, anchor[1] + unitH * 0.15, anchor[2] + unitD * 0.2],
+                [wallThickness, unitH * 0.35, unitD * 0.5],
+                [0.75, 0.82, 0.88], 0.35),
+            );
+
+            // Interior partition wall (bedroom divider)
+            pushDecoration(
+              createBoxMesh(xeokit, runtime.viewer.scene,
+                withPrefix(`selected-partition-${selectedUnit.id}`),
+                [anchor[0] + unitW * 0.12, anchor[1], anchor[2]],
+                [wallThickness, unitH * 0.42, unitD * 0.8],
+                [0.7, 0.78, 0.84], 0.28),
+            );
+
+            // Unit highlight glow
+            pushDecoration(
+              createBoxMesh(xeokit, runtime.viewer.scene,
+                withPrefix(`selected-glow-${selectedUnit.id}`),
+                [anchor[0], anchor[1], anchor[2]],
+                [unitW * 1.02, unitH * 0.01, unitD * 1.02],
+                [0.13, 0.77, 0.37], 0.35),
+            );
+
+            // MEP traces inside unit
+            if (activeLayers.has('plomberie')) {
+              pushDecoration(
+                createLineMesh(xeokit, runtime.viewer.scene,
+                  withPrefix(`inside-plumbing-${selectedUnit.id}`),
+                  [anchor[0] - unitW * 0.4, anchor[1] - unitH * 0.3, anchor[2] - unitD * 0.3],
+                  [anchor[0] - unitW * 0.4, anchor[1] + unitH * 0.1, anchor[2] + unitD * 0.3],
+                  layerPalette.plomberie.rgb, [0.06, 0.03]),
+              );
+            }
+            if (activeLayers.has('hvac')) {
+              pushDecoration(
+                createLineMesh(xeokit, runtime.viewer.scene,
+                  withPrefix(`inside-hvac-${selectedUnit.id}`),
+                  [anchor[0] - unitW * 0.3, anchor[1] + unitH * 0.4, anchor[2] - unitD * 0.4],
+                  [anchor[0] + unitW * 0.3, anchor[1] + unitH * 0.4, anchor[2] + unitD * 0.2],
+                  layerPalette.hvac.rgb, [0.04, 0.02]),
+              );
+            }
+            if (activeLayers.has('electricite')) {
+              pushDecoration(
+                createLineMesh(xeokit, runtime.viewer.scene,
+                  withPrefix(`inside-elec-${selectedUnit.id}`),
+                  [anchor[0] + unitW * 0.45, anchor[1] + unitH * 0.35, anchor[2]],
+                  [anchor[0] - unitW * 0.3, anchor[1] + unitH * 0.35, anchor[2]],
+                  layerPalette.electricite.rgb, [0.03, 0.02]),
+              );
+            }
           }
         }
       }
@@ -1276,6 +1381,271 @@ export function BuildingViewer3D({
               );
             }
           });
+      }
+
+      // Water supply - vertical riser + horizontal branches per floor
+      if (activeLayers.has('water')) {
+        const riserX = workingAabb[0] + width * 0.32;
+        const riserZ = workingAabb[5] - depth * 0.28;
+        pushDecoration(
+          createLineMesh(xeokit, runtime.viewer.scene, withPrefix('water-riser'),
+            [riserX, workingAabb[1] + floorBand * 0.1, riserZ],
+            [riserX, workingAabb[4] - floorBand * 0.05, riserZ],
+            overlayPalette.water.rgb),
+        );
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * fi + floorBand * 0.35;
+          pushDecoration(
+            createLineMesh(xeokit, runtime.viewer.scene, withPrefix(`water-branch-${floor}`),
+              [riserX, y, riserZ],
+              [workingAabb[3] - width * 0.2, y, riserZ + depth * 0.15],
+              overlayPalette.water.rgb, [0.12, 0.04]),
+          );
+        });
+      }
+
+      // Gas supply - riser from basement + branches
+      if (activeLayers.has('gas')) {
+        const riserX = workingAabb[3] - width * 0.28;
+        const riserZ = workingAabb[5] - depth * 0.32;
+        pushDecoration(
+          createLineMesh(xeokit, runtime.viewer.scene, withPrefix('gas-riser'),
+            [riserX, workingAabb[1], riserZ],
+            [riserX, workingAabb[4] - floorBand * 0.2, riserZ],
+            overlayPalette.gas.rgb),
+        );
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * fi + floorBand * 0.28;
+          pushDecoration(
+            createLineMesh(xeokit, runtime.viewer.scene, withPrefix(`gas-branch-${floor}`),
+              [riserX, y, riserZ],
+              [workingCenter[0], y, riserZ],
+              overlayPalette.gas.rgb, [0.06, 0.04]),
+          );
+        });
+      }
+
+      // Drainage - large pipe running down the building
+      if (activeLayers.has('drainage')) {
+        const drainX = workingAabb[0] + width * 0.2;
+        const drainZ = workingCenter[2] + depth * 0.18;
+        pushDecoration(
+          createLineMesh(xeokit, runtime.viewer.scene, withPrefix('drainage-main'),
+            [drainX, workingAabb[1], drainZ],
+            [drainX, workingAabb[4] - floorBand * 0.15, drainZ],
+            overlayPalette.drainage.rgb),
+        );
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('drainage-trap'),
+            [drainX, workingAabb[1] + floorBand * 0.08, drainZ],
+            [width * 0.12, floorBand * 0.06, depth * 0.12],
+            overlayPalette.drainage.rgb, 0.3),
+        );
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * fi + floorBand * 0.15;
+          pushDecoration(
+            createLineMesh(xeokit, runtime.viewer.scene, withPrefix(`drainage-floor-${floor}`),
+              [drainX, y, drainZ],
+              [drainX + width * 0.35, y, drainZ + depth * 0.06],
+              overlayPalette.drainage.rgb, [0.1, 0.06]),
+          );
+        });
+      }
+
+      // Sprinklers - ceiling-mounted grid per floor
+      if (activeLayers.has('sprinklers')) {
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * (fi + 1) - floorBand * 0.08;
+          // Main trunk
+          pushDecoration(
+            createLineMesh(xeokit, runtime.viewer.scene, withPrefix(`sprinkler-trunk-${floor}`),
+              [workingAabb[0] + width * 0.15, y, workingCenter[2]],
+              [workingAabb[3] - width * 0.15, y, workingCenter[2]],
+              overlayPalette.sprinklers.rgb, [0.08, 0.03]),
+          );
+          // Cross branches
+          for (let i = 0; i < 3; i++) {
+            const x = workingAabb[0] + width * (0.25 + i * 0.25);
+            pushDecoration(
+              createLineMesh(xeokit, runtime.viewer.scene, withPrefix(`sprinkler-cross-${floor}-${i}`),
+                [x, y, workingAabb[2] + depth * 0.2],
+                [x, y, workingAabb[5] - depth * 0.2],
+                overlayPalette.sprinklers.rgb, [0.06, 0.03]),
+            );
+          }
+        });
+      }
+
+      // Fire - fire hose cabinets + alarm pull stations per floor
+      if (activeLayers.has('fire')) {
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * fi + floorBand * 0.5;
+          // Fire hose cabinet
+          pushDecoration(
+            createBoxMesh(xeokit, runtime.viewer.scene, withPrefix(`fire-cabinet-${floor}`),
+              [workingCenter[0] - width * 0.15, y, workingAabb[5] - depth * 0.05],
+              [width * 0.04, floorBand * 0.18, depth * 0.02],
+              overlayPalette.fire.rgb, 0.65),
+          );
+          // Alarm pull station
+          pushDecoration(
+            createBoxMesh(xeokit, runtime.viewer.scene, withPrefix(`fire-alarm-${floor}`),
+              [workingCenter[0] + width * 0.2, y, workingAabb[5] - depth * 0.05],
+              [width * 0.02, floorBand * 0.08, depth * 0.015],
+              overlayPalette.fire.rgb, 0.8),
+          );
+        });
+      }
+
+      // Security - access control points at entries
+      if (activeLayers.has('security')) {
+        // Main entrance
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('security-entrance'),
+            [workingCenter[0], workingAabb[1] + floorBand * 0.5, workingAabb[5] - depth * 0.02],
+            [width * 0.12, floorBand * 0.42, depth * 0.02],
+            overlayPalette.security.rgb, 0.25),
+        );
+        // Parking gate
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('security-parking-gate'),
+            [workingAabb[0] + width * 0.3, workingAabb[1] + floorBand * 0.18, workingAabb[5] - depth * 0.01],
+            [width * 0.08, floorBand * 0.16, depth * 0.015],
+            overlayPalette.security.rgb, 0.35),
+        );
+      }
+
+      // Lighting - ceiling fixtures per floor
+      if (activeLayers.has('lighting')) {
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * (fi + 1) - floorBand * 0.06;
+          for (let r = 0; r < 2; r++) {
+            const z = workingCenter[2] + depth * (r === 0 ? -0.08 : 0.08);
+            for (let c = 0; c < 4; c++) {
+              const x = workingAabb[0] + width * (0.2 + c * 0.2);
+              pushDecoration(
+                createBoxMesh(xeokit, runtime.viewer.scene, withPrefix(`light-${floor}-${r}-${c}`),
+                  [x, y, z],
+                  [width * 0.06, 0.02, depth * 0.015],
+                  overlayPalette.lighting.rgb, 0.6),
+              );
+            }
+          }
+        });
+      }
+
+      // Access control - badge readers at core entries per floor
+      if (activeLayers.has('access')) {
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * fi + floorBand * 0.45;
+          pushDecoration(
+            createBoxMesh(xeokit, runtime.viewer.scene, withPrefix(`access-reader-${floor}`),
+              [workingCenter[0] - width * 0.06, y, workingCenter[2] - depth * 0.12],
+              [width * 0.015, floorBand * 0.06, depth * 0.01],
+              overlayPalette.access.rgb, 0.75),
+          );
+        });
+      }
+
+      // Common areas - lobby, corridors highlighted
+      if (activeLayers.has('communs')) {
+        // Ground floor lobby
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('communs-lobby'),
+            [workingCenter[0], workingAabb[1] + floorBand * 0.4, workingCenter[2] + depth * 0.08],
+            [width * 0.3, floorBand * 0.35, depth * 0.18],
+            overlayPalette.communs.rgb, 0.15),
+        );
+        // Corridors per floor
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * fi + floorBand * 0.42;
+          pushDecoration(
+            createBoxMesh(xeokit, runtime.viewer.scene, withPrefix(`communs-corridor-${floor}`),
+              [workingCenter[0], y, workingCenter[2]],
+              [width * 0.08, floorBand * 0.3, depth * 0.35],
+              overlayPalette.communs.rgb, 0.1),
+          );
+        });
+      }
+
+      // Lockers - storage room in basement
+      if (activeLayers.has('lockers')) {
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('lockers-room'),
+            [workingCenter[0] + width * 0.2, workingAabb[1] + floorBand * 0.3, workingCenter[2] - depth * 0.12],
+            [width * 0.18, floorBand * 0.28, depth * 0.14],
+            overlayPalette.lockers.rgb, 0.2),
+        );
+      }
+
+      // Pool - at ground level or rooftop
+      if (activeLayers.has('pool')) {
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('pool-basin'),
+            [workingCenter[0] - width * 0.1, workingAabb[1] + floorBand * 0.2, workingCenter[2] + depth * 0.2],
+            [width * 0.22, floorBand * 0.06, depth * 0.14],
+            overlayPalette.pool.rgb, 0.35),
+        );
+      }
+
+      // Urban farming - rooftop garden beds
+      if (activeLayers.has('farming')) {
+        for (let i = 0; i < 3; i++) {
+          pushDecoration(
+            createBoxMesh(xeokit, runtime.viewer.scene, withPrefix(`farming-bed-${i}`),
+              [workingAabb[0] + width * (0.25 + i * 0.22), workingAabb[4] - floorBand * 0.04, workingCenter[2]],
+              [width * 0.08, floorBand * 0.04, depth * 0.16],
+              overlayPalette.farming.rgb, 0.4),
+          );
+        }
+      }
+
+      // Rooftop 3D - terrace / mechanical penthouse
+      if (activeLayers.has('rooftop3d')) {
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('rooftop-terrace'),
+            [workingCenter[0], workingAabb[4] - floorBand * 0.02, workingCenter[2] + depth * 0.08],
+            [width * 0.5, floorBand * 0.04, depth * 0.25],
+            overlayPalette.rooftop3d.rgb, 0.18),
+        );
+        pushDecoration(
+          createBoxMesh(xeokit, runtime.viewer.scene, withPrefix('rooftop-mech'),
+            [workingCenter[0] - width * 0.15, workingAabb[4] + floorBand * 0.06, workingCenter[2] - depth * 0.1],
+            [width * 0.1, floorBand * 0.12, depth * 0.1],
+            overlayPalette.rooftop3d.rgb, 0.3),
+        );
+      }
+
+      // Internet / IT cabling - vertical backbone + horizontal runs
+      if (activeLayers.has('internet') || activeLayers.has('electrical')) {
+        const layerKey = activeLayers.has('internet') ? 'internet' : 'electrical';
+        const palette = overlayPalette[layerKey] ?? overlayPalette.it;
+        const riserX = workingCenter[0] + width * 0.12;
+        const riserZ = workingCenter[2] - depth * 0.15;
+        pushDecoration(
+          createLineMesh(xeokit, runtime.viewer.scene, withPrefix(`${layerKey}-backbone`),
+            [riserX, workingAabb[1] + floorBand * 0.1, riserZ],
+            [riserX, workingAabb[4] - floorBand * 0.05, riserZ],
+            palette.rgb, [0.03, 0.02]),
+        );
+        visibleFloors.forEach((floor) => {
+          const fi = Math.max(0, floors.indexOf(floor));
+          const y = workingAabb[1] + floorBand * fi + floorBand * 0.62;
+          pushDecoration(
+            createLineMesh(xeokit, runtime.viewer.scene, withPrefix(`${layerKey}-run-${floor}`),
+              [riserX, y, riserZ],
+              [workingAabb[3] - width * 0.18, y, riserZ + depth * 0.08],
+              palette.rgb, [0.04, 0.02]),
+          );
+        });
       }
 
       if (activeLayers.has('maintenance')) {

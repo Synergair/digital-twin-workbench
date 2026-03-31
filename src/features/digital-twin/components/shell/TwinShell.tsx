@@ -2,7 +2,10 @@ import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDigitalTwinStore } from '@/store/digitalTwinStore';
 import { useTwinManifest, useTwinUnits, useTwinPins } from '@/hooks/useTwinQueries';
+import { getTwinData } from '../../twinData';
 import { BuildingViewer3D } from '../BuildingViewer3D';
+import { FloorPlanOverlay } from '../FloorPlanOverlay';
+import { ModelSelector } from '../ModelSelector';
 import { AddressSearchBar } from './AddressSearchBar';
 import { BottomToolbar } from './BottomToolbar';
 import { RightDrawer } from './RightDrawer';
@@ -35,6 +38,8 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
   const [showDispatchModal, setShowDispatchModal] = useState(false);
   const [showDispatchPanel, setShowDispatchPanel] = useState(false);
   const [dispatchCoordinates, setDispatchCoordinates] = useState<{ x: number; y: number; z: number } | null>(null);
+  const [showFloorPlan, setShowFloorPlan] = useState(false);
+  const [modelOverride, setModelOverride] = useState<string | null>(null);
 
   // Data queries
   const manifestQuery = useTwinManifest(propertyId);
@@ -44,6 +49,7 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
   const manifest = manifestQuery.data;
   const units = useMemo(() => unitsQuery.data ?? [], [unitsQuery.data]);
   const pins = useMemo(() => pinsQuery.data ?? [], [pinsQuery.data]);
+  const twinData = useMemo(() => getTwinData(propertyId), [propertyId]);
 
   // Store state
   const {
@@ -117,7 +123,7 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
 
   // Model URL resolution
   const fallbackModelUrl = '/listing-3d-mockup/models/modern-apartment-building.glb';
-  const modelUrl = manifest?.odm_model_url ?? fallbackModelUrl;
+  const modelUrl = modelOverride ?? manifest?.odm_model_url ?? fallbackModelUrl;
 
   // Track unit positions for 3D labels (mock positions for now)
   const unitPositions = useMemo(() => {
@@ -245,6 +251,15 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
 
       {/* Viewer Stage - fills remaining space */}
       <div className="relative flex-1 overflow-hidden">
+        {/* Model Selector - top left overlay */}
+        <div className="absolute left-4 top-4 z-30">
+          <ModelSelector
+            twinData={twinData}
+            currentModelUrl={modelUrl}
+            onSelectModel={(url) => setModelOverride(url)}
+          />
+        </div>
+
         <div className="absolute inset-0">
           <BuildingViewer3D
             modelUrl={modelUrl}
@@ -296,6 +311,17 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
             onClose={handleCloseSpatialQuery}
             onSelectMEP={handleSelectMEP}
             onMeasureFrom={handleMeasure}
+          />
+
+          {/* Floor Plan Overlay */}
+          <FloorPlanOverlay
+            floorPlans={twinData.floorPlans}
+            units={units}
+            selectedUnitId={selectedUnit?.id ?? null}
+            isolatedFloor={isolatedFloor}
+            visible={showFloorPlan}
+            onClose={() => setShowFloorPlan(false)}
+            onSelectUnit={selectUnit}
           />
 
           {/* 3D Unit Labels */}
@@ -362,6 +388,9 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
         onToggleSheet={() => setSheetExpanded(!sheetExpanded)}
         onToggleUnitLabels={() => setShowUnitLabels(!showUnitLabels)}
         onOpenMap={handleOpenMap}
+        onToggle2D={() => setShowFloorPlan(!showFloorPlan)}
+        onToggleInsideView={() => setView(activeView === 'inside' ? 'iso' : 'inside')}
+        show2D={showFloorPlan}
       />
 
       {/* Bottom Sheet - slides up */}
