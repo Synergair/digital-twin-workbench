@@ -1131,6 +1131,63 @@ export function BuildingViewer3D({
                   layerPalette.electricite.rgb, [0.03, 0.02]),
               );
             }
+
+            // Procedural furniture inside unit
+            const fy = anchor[1] - unitH * 0.42; // floor level
+
+            // Bed (bedroom side - right of partition)
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-bed-${selectedUnit.id}`),
+              [anchor[0] + unitW * 0.28, fy + floorBand * 0.04, anchor[2] - unitD * 0.15],
+              [unitW * 0.15, floorBand * 0.03, unitD * 0.2],
+              [0.6, 0.5, 0.45], 0.7));
+            // Bed headboard
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-headboard-${selectedUnit.id}`),
+              [anchor[0] + unitW * 0.28, fy + floorBand * 0.07, anchor[2] - unitD * 0.26],
+              [unitW * 0.15, floorBand * 0.04, unitD * 0.01],
+              [0.55, 0.45, 0.4], 0.8));
+
+            // Sofa (living side - left of partition)
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-sofa-${selectedUnit.id}`),
+              [anchor[0] - unitW * 0.25, fy + floorBand * 0.03, anchor[2] + unitD * 0.2],
+              [unitW * 0.18, floorBand * 0.025, unitD * 0.08],
+              [0.45, 0.52, 0.58], 0.7));
+            // Sofa back
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-sofaback-${selectedUnit.id}`),
+              [anchor[0] - unitW * 0.25, fy + floorBand * 0.055, anchor[2] + unitD * 0.25],
+              [unitW * 0.18, floorBand * 0.03, unitD * 0.015],
+              [0.42, 0.5, 0.55], 0.7));
+
+            // Coffee table
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-table-${selectedUnit.id}`),
+              [anchor[0] - unitW * 0.25, fy + floorBand * 0.02, anchor[2] + unitD * 0.05],
+              [unitW * 0.08, floorBand * 0.012, unitD * 0.05],
+              [0.7, 0.6, 0.5], 0.65));
+
+            // Kitchen counter (near front wall)
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-kitchen-${selectedUnit.id}`),
+              [anchor[0] - unitW * 0.35, fy + floorBand * 0.04, anchor[2] - unitD * 0.3],
+              [unitW * 0.08, floorBand * 0.035, unitD * 0.12],
+              [0.82, 0.82, 0.8], 0.75));
+
+            // Bathroom fixture (small box near right wall)
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-bath-${selectedUnit.id}`),
+              [anchor[0] + unitW * 0.38, fy + floorBand * 0.02, anchor[2] + unitD * 0.25],
+              [unitW * 0.06, floorBand * 0.025, unitD * 0.06],
+              [0.9, 0.92, 0.95], 0.8));
+
+            // Desk/Bureau
+            pushDecoration(createBoxMesh(xeokit, runtime.viewer.scene,
+              withPrefix(`furniture-desk-${selectedUnit.id}`),
+              [anchor[0] + unitW * 0.15, fy + floorBand * 0.03, anchor[2] + unitD * 0.15],
+              [unitW * 0.1, floorBand * 0.025, unitD * 0.05],
+              [0.65, 0.55, 0.4], 0.7));
           }
         }
       }
