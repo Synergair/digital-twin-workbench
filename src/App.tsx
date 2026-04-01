@@ -1,14 +1,21 @@
-import { Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { EstateShell } from './components/estate/EstateShell';
 import { TwinShell } from './features/digital-twin/components/shell/TwinShell';
 
+// Read params from window.location.search directly to avoid React Router basename issues
+function getParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    embed: params.get('embed') === 'true',
+    propertyId: params.get('propertyId') ?? null,
+    unitId: params.get('unitId') ?? null,
+    view: params.get('view') ?? null,
+    shell: params.get('shell') === 'true',
+  };
+}
+
 function EstatePage() {
-  const [params] = useSearchParams();
-  const embed = params.get('embed') === 'true';
-  const propertyId = params.get('propertyId') ?? null;
-  const unitId = params.get('unitId') ?? null;
-  const view = params.get('view') ?? null; // 'inside' for walkthrough
-  const shell = params.get('shell') === 'true';
+  const { embed, propertyId, unitId, shell } = getParams();
 
   // When embedded with a propertyId, show the full TwinShell
   if ((embed || shell) && propertyId) {
@@ -29,8 +36,8 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<EstatePage />} />
-      <Route path="/embed" element={<EstatePage />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/index.html" element={<EstatePage />} />
+      <Route path="*" element={<EstatePage />} />
     </Routes>
   );
 }
