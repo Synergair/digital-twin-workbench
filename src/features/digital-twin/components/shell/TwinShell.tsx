@@ -121,9 +121,12 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
     0
   );
 
-  // Model URL resolution
-  const fallbackModelUrl = '/listing-3d-mockup/models/modern-apartment-building.glb';
-  const modelUrl = modelOverride ?? manifest?.odm_model_url ?? fallbackModelUrl;
+  // Model URL resolution — prefix with Vite base path for production
+  const base = import.meta.env.BASE_URL ?? '/';
+  const prefixBase = (url: string) => url.startsWith('http') || url.startsWith(base) ? url : `${base}${url.replace(/^\//, '')}`;
+  const fallbackModelUrl = `${base}listing-3d-mockup/models/modern-apartment-building.glb`;
+  const rawModelUrl = modelOverride ?? manifest?.odm_model_url ?? fallbackModelUrl;
+  const modelUrl = prefixBase(rawModelUrl);
 
   // Track unit positions for 3D labels (mock positions for now)
   const unitPositions = useMemo(() => {

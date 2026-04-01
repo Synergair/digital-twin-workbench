@@ -94,7 +94,7 @@ export function UnitInfoPanel({ property, unit, units, twinData, isDark, onBack,
         <div className={`mt-4 overflow-hidden rounded-xl border ${cls.border}`}>
           <div className="relative">
             <img
-              src={`/documents/floorplans/${floorPlan.file}`}
+              src={`${import.meta.env.BASE_URL}documents/floorplans/${floorPlan.file}`}
               alt={floorPlan.label}
               className="w-full object-contain"
               style={{ maxHeight: '200px' }}

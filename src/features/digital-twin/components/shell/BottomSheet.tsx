@@ -308,7 +308,7 @@ function CaptureTabContent({ twinData, onStartCapture }: { twinData: TwinData; o
             {twinData.pointCloudScans.map((scan) => (
               <div key={scan.id} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-3">
                 <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-white/5">
-                  <img src={`/documents/scans/${scan.preview}`} alt={scan.name} className="h-full w-full object-cover" />
+                  <img src={`${import.meta.env.BASE_URL}documents/scans/${scan.preview}`} alt={scan.name} className="h-full w-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-white">{scan.name}</p>
@@ -419,7 +419,7 @@ function SettingsTabContent({ twinData }: { twinData: TwinData }) {
             </div>
             <div className="text-right">
               <p className="text-[10px] text-white/40">Expires: {w.expiry}</p>
-              <a href={`/documents/${w.file}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-teal-400 hover:text-teal-300">
+              <a href={`${import.meta.env.BASE_URL}documents/${w.file}`} target="_blank" rel="noopener noreferrer" className="text-[10px] text-teal-400 hover:text-teal-300">
                 View PDF
               </a>
             </div>

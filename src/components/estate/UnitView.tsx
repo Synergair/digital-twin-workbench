@@ -27,6 +27,10 @@ interface UnitViewProps {
 
 export function UnitView({ property, unit, units, twinData, viewMode, isDark }: UnitViewProps) {
   const store = useDigitalTwinStore();
+  const base = import.meta.env.BASE_URL ?? '/';
+  const resolvedModelUrl = property.modelUrl.startsWith('http') || property.modelUrl.startsWith(base)
+    ? property.modelUrl
+    : `${base}${property.modelUrl.replace(/^\//, '')}`;
 
   const twinUnits = useMemo(() =>
     units.map((u) => ({
@@ -48,7 +52,7 @@ export function UnitView({ property, unit, units, twinData, viewMode, isDark }: 
     return (
       <div className="h-full w-full">
         <BuildingViewer3D
-          modelUrl={property.modelUrl}
+          modelUrl={resolvedModelUrl}
           units={twinUnits}
           pins={[]}
           activeLayers={store.activeLayers}
@@ -79,7 +83,7 @@ export function UnitView({ property, unit, units, twinData, viewMode, isDark }: 
         {floorPlan ? (
           <div className="relative max-h-full max-w-full p-8">
             <img
-              src={`/documents/floorplans/${floorPlan.file}`}
+              src={`${import.meta.env.BASE_URL}documents/floorplans/${floorPlan.file}`}
               alt={floorPlan.label}
               className="max-h-[70vh] rounded-2xl object-contain shadow-2xl"
             />
@@ -162,7 +166,7 @@ export function UnitView({ property, unit, units, twinData, viewMode, isDark }: 
           }`}>
             {twinData?.floorPlans?.[0] && (
               <img
-                src={`/documents/floorplans/${twinData.floorPlans[0].file}`}
+                src={`${import.meta.env.BASE_URL}documents/floorplans/${twinData.floorPlans[0].file}`}
                 alt="Mini map"
                 className="h-full w-full object-cover"
               />

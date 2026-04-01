@@ -45,7 +45,7 @@ export function FloorPlanOverlay({
 
   if (!visible || !floorPlans.length) return null;
 
-  const planUrl = `/documents/floorplans/${activePlan.file}`;
+  const planUrl = `${import.meta.env.BASE_URL}documents/floorplans/${activePlan.file}`;
 
   return (
     <div

@@ -51,10 +51,15 @@ export function BuildingView({ property, units, twinData, isDark, selectedUnitId
     [units, property.id],
   );
 
+  const base = import.meta.env.BASE_URL ?? '/';
+  const resolvedModelUrl = property.modelUrl.startsWith('http') || property.modelUrl.startsWith(base)
+    ? property.modelUrl
+    : `${base}${property.modelUrl.replace(/^\//, '')}`;
+
   return (
     <div className="h-full w-full">
       <BuildingViewer3D
-        modelUrl={property.modelUrl}
+        modelUrl={resolvedModelUrl}
         units={twinUnits}
         pins={[]}
         activeLayers={store.activeLayers}
