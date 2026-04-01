@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDigitalTwinStore } from '@/store/digitalTwinStore';
 import { useTwinManifest, useTwinUnits, useTwinPins } from '@/hooks/useTwinQueries';
@@ -40,6 +40,18 @@ export function TwinShell({ propertyId, unitId, readOnly = false }: TwinShellPro
   const [dispatchCoordinates, setDispatchCoordinates] = useState<{ x: number; y: number; z: number } | null>(null);
   const [showFloorPlan, setShowFloorPlan] = useState(false);
   const [modelOverride, setModelOverride] = useState<string | null>(null);
+
+  // Auto-select unit and switch to inside view when unitId is provided via URL
+  useEffect(() => {
+    if (unitId) {
+      selectUnit(unitId);
+      // Read view param from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('view') === 'inside') {
+        setView('inside');
+      }
+    }
+  }, [unitId]);
 
   // Data queries
   const manifestQuery = useTwinManifest(propertyId);
