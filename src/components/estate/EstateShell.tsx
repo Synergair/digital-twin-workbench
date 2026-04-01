@@ -48,10 +48,35 @@ export function EstateShell({ embed = false, initialPropertyId = null, initialSh
     [properties, state.propertyId],
   );
 
-  const currentUnits = useMemo(
-    () => (state.propertyId ? getUnitsByProperty(state.propertyId) : []),
-    [state.propertyId, getUnitsByProperty],
-  );
+  // Convert store units (unitNumber, sqft, rent) → normalized shape (unit_number, area_m2, floor, current_rent)
+  const currentUnits = useMemo(() => {
+    if (!state.propertyId) return [];
+    const raw = getUnitsByProperty(state.propertyId);
+    return raw.map((u) => {
+      // Derive floor from unit ID pattern: "prop-xxx-unit-{floor}-{index}"
+      const idParts = u.id.split('-');
+      const floorIdx = idParts.indexOf('unit');
+      const floor = floorIdx >= 0 && idParts[floorIdx + 1] ? Number(idParts[floorIdx + 1]) : 0;
+
+      return {
+        id: u.id,
+        property_id: u.propertyId,
+        unit_number: u.unitNumber,
+        unit_type: 'residential' as const,
+        floor,
+        area_m2: Math.round(u.sqft * 0.0929),
+        current_rent: u.rent,
+        status: u.status as 'occupied' | 'vacant' | 'alert' | 'warn',
+        tenant_name: u.tenantName ?? null,
+        lease_expiry: u.leaseEnd ?? null,
+        has_digital_twin: true,
+        last_capture_at: null,
+        active_alerts: [] as any[],
+        bedrooms: u.bedrooms,
+        sqft: u.sqft,
+      };
+    });
+  }, [state.propertyId, getUnitsByProperty]);
 
   const currentUnit = useMemo(
     () => currentUnits.find((u) => u.id === state.unitId) ?? null,
