@@ -1,43 +1,51 @@
 # Digital Twin Workbench
 
-Isolated playground for the OKey Digital Twin experience (owner + tenant flows) with mock data and local 3D assets.
+3DEstate-style building visualization platform built with xeokit BIM engine. Deployed as a sub-app at `/digital-twin/` on okeylist.com and embedded via iframe in the O'Key Platform.
 
-## Quick start
+## Features
+
+- **EstateShell**: Portfolio → Building → Unit navigation with building tabs
+- **28 MEP layers**: HVAC, plumbing, electrical, fire, security, water, gas, drainage, sprinklers, lighting, access, sensors, cameras, parking, elevators, stairs, roof, solar, zones, maintenance, communs, lockers, pool, farming, rooftop, internet
+- **4 unit view modes**: Exterior, Model 360, Floorplan 3D, Tour
+- **Procedural furniture**: Bed, sofa, coffee table, kitchen counter, bathroom, desk
+- **Floor plan overlays**: 2D images with unit markers
+- **IFC model loading**: WebIFCLoaderPlugin with model selector
+- **Day/night lighting**, exploded view, X-ray mode, floor isolation
+
+## Embedding
+
+```
+/digital-twin/index.html?embed=true&propertyId=prop-midrise-condo&shell=true
+```
+
+| Param | Effect |
+|-------|--------|
+| `embed=true` | Show TwinShell |
+| `propertyId` | Property to load |
+| `unitId` | Pre-select unit |
+| `view=inside` | Walkthrough mode |
+
+## Development
 
 ```bash
 npm install
-./scripts/setup-web-ifc.sh
-npm run dev
+npm run dev     # localhost:5174
+npm run build   # dist/ → copy to OKey-Platform/public/digital-twin/
 ```
 
-## Download extra sample models
+## Architecture
 
-```bash
-./scripts/download-models.sh
 ```
-
-## Extract point clouds
-
-```bash
-./scripts/extract-pointclouds.sh
+src/
+├── App.tsx                        # URL params from window.location.search
+├── components/estate/             # EstateShell, TopToolbar, BottomBar, views
+├── features/digital-twin/
+│   ├── components/
+│   │   ├── BuildingViewer3D.tsx   # xeokit viewer (28 MEP layers + furniture)
+│   │   ├── FloorPlanOverlay.tsx   # 2D floor plans
+│   │   ├── ModelSelector.tsx      # IFC/GLB switcher
+│   │   └── shell/                 # TwinShell, BottomToolbar, BottomSheet
+│   ├── twinData.ts               # Mock data (maintenance, IoT, inspections)
+│   └── archetypes.ts             # 18 building types
+└── store/                         # digitalTwinStore, ownerPropertiesStore
 ```
-
-## Useful routes
-
-- `/` workbench landing
-- `/workbench` scenario selector
-- `/workbench/view?persona=owner&property=prop-midrise-condo` combined view
-- `/owner/properties/prop-midrise-condo` overview
-- `/owner/properties/prop-midrise-condo/digital-twin` full workspace
-- `/tenant/digital-twin` tenant view
-
-## Notes
-
-- Mock API is enabled via `.env` (`VITE_MOCK_API_MODE=mock`).
-- 3D models are served from `public/listing-3d-mockup`.
-- Reference assets from other repos live in `references/`.
-- IFC direct viewer needs `public/web-ifc/web-ifc.wasm` (use `./scripts/setup-web-ifc.sh` after install).
-- Point cloud viewer lists PLY files via `public/documents/scans/pointclouds.json` (updated by `./scripts/extract-pointclouds.sh`).
-- Model overrides/defaults are stored in localStorage per property (`digital-twin-default-models-v1`).
-- Point cloud viewer settings persist per property + user in localStorage (`digital-twin-pointcloud-settings-v1:{propertyId}:{userId}`).
-- Property intelligence uses `VITE_INTELLIGENCE_API_BASE_URL` (defaults to the live endpoint); set `VITE_MOCK_API_MODE=false` to force live data.
